@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
+from config import *
 
 
 class Main(QMainWindow):
@@ -33,6 +34,16 @@ class Films(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('film.ui', self)
+
+        #
+
+        # TODO: Сделать сортировку по рейдину и по критериям пользователя
+        count = 1
+        for value in sql.execute("SELECT * FROM data"):
+            # Вывод информации из базы данных database.db
+            # 1. Шан-Чи и легенда десяти колец, 7.3, 2021, Фантастика
+            self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            count += 1
 
 
 class Serials(QMainWindow):
