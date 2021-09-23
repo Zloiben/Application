@@ -14,5 +14,5 @@ db.commit()
 
 # film = 'Test'
 # rating = 0 - 10
-# release = '00.00.0000'
+# release = '0000'
 # style = 'test'
