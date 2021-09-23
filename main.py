@@ -13,7 +13,7 @@ class Main(QMainWindow):
 
         #
 
-        self.books_and_comics = BooksComics()
+        self.films = Films()
         self.serial = Serials()
         self.books_and_comics = BooksComics()
 
