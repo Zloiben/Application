@@ -29,12 +29,15 @@ class Main(QMainWindow):
 
     def film_window(self):
         self.films.show()
+        ex.close()
 
     def serial_window(self):
         self.serial.show()
+        ex.close()
 
     def books_and_comics_window(self):
         self.books_and_comics.show()
+        ex.close()
 
 
 class Films(QMainWindow):
@@ -48,8 +51,6 @@ class Films(QMainWindow):
         # -----------------------------------Базовый вывод фильмов------------------------------------------------------
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            # Вывод информации из базы данных database.db
-            # 1. Шан-Чи и легенда десяти колец, 7.3, 2021, Фантастика
             self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
@@ -67,11 +68,10 @@ class Films(QMainWindow):
             count += 1
 
     def output_of_films_by_date(self):
+        # TODO: Не правильный вывод
         self.table.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-            # Вывод информации из базы данных database.db
-            # 1. Шан-Чи и легенда десяти колец, 7.3, 2021, Фантастика
             self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
@@ -79,8 +79,6 @@ class Films(QMainWindow):
         self.table.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-            # Вывод информации из базы данных database.db
-            # 1. Шан-Чи и легенда десяти колец, 7.3, 2021, Фантастика
             self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
