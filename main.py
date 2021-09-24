@@ -51,35 +51,35 @@ class Films(QMainWindow):
         # -----------------------------------Базовый вывод фильмов------------------------------------------------------
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
     # ----------------------------------------------Основные Критерии---------------------------------------------------
     # Кнопки Основных критерий
-        self.btn_rating_DESC.clicked.connect(self.output_of_films_by_rating)
-        self.btn_date_DESC.clicked.connect(self.output_of_films_by_date)
-        self.btn_name_DESC.clicked.connect(self.output_of_films_by_name)
+        self.btn_rating_DESC_films.clicked.connect(self.output_of_films_by_rating)
+        self.btn_date_DESC_films.clicked.connect(self.output_of_films_by_date)
+        self.btn_name_DESC_films.clicked.connect(self.output_of_films_by_name)
 
     def output_of_films_by_rating(self):
-        self.table.clear()
+        self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
     def output_of_films_by_date(self):
         # TODO: Не правильный вывод
-        self.table.clear()
+        self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-            self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
     def output_of_films_by_name(self):
-        self.table.clear()
+        self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-            self.table.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
             count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -97,6 +97,34 @@ class BooksComics(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('books_comics.ui', self)
+
+    # TODO: Сделать сортировку по Критериям пользователя
+
+    # ----------------------------------------------Основные Критерии---------------------------------------------------
+        # Кнопки Основных критерий
+        self.btn_date_DESC_books.clicked.connect(self.output_of_books_by_date)
+        self.btn_name_DESC_books.clicked.connect(self.output_of_books_by_name)
+
+        count = 1
+        for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
+            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            count += 1
+
+    def output_of_books_by_date(self):
+        self.table_books.clear()
+        count = 1
+        for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
+            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            count += 1
+
+    def output_of_books_by_name(self):
+        self.table_books.clear()
+        count = 1
+        for value in sql.execute("SELECT * FROM data_books ORDER BY book_name ASC"):
+            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            count += 1
+
+    # ------------------------------------------------------------------------------------------------------------------
 
 
 if __name__ == '__main__':
