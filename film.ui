@@ -37,13 +37,13 @@
    </widget>
    <widget class="QPlainTextEdit" name="table_films">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>351</width>
+      <width>361</width>
       <height>491</height>
      </rect>
     </property>

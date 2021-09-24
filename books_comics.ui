@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,13 +37,13 @@
    </widget>
    <widget class="QPlainTextEdit" name="table_books">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>351</width>
+      <width>371</width>
       <height>431</height>
      </rect>
     </property>

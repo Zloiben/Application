@@ -3,6 +3,8 @@ import sqlite3
 db = sqlite3.connect("database.db")
 sql = db.cursor()
 
+#
+
 sql.execute("""CREATE TABLE IF NOT EXISTS data (
     film TEXT,
     rating REAL,
@@ -10,6 +12,19 @@ sql.execute("""CREATE TABLE IF NOT EXISTS data (
     style TEXT
 )""")
 db.commit()
+
+#
+
+sql.execute("""CREATE TABLE IF NOT EXISTS data_books (
+    book_name TEXT,
+    release DATE,
+    author TEXT,
+    style TEXT,
+    toms INT
+)""")
+db.commit()
+
+#
 
 sql.execute("""CREATE TABLE IF NOT EXISTS data_books (
     book_name TEXT,
@@ -23,9 +38,13 @@ db.commit()
 
 # TODO: Увеличить базу данных
 # TODO: Добавить к переменной style еще несколько переменных для более точного поиска фильмов
-# TODO: Изменить возращаемые данные у переменой release
+# TODO: Изменить возращаемые данные у переменой release, кроме release у Книг
 # '0000' -> '0000.00.00'
-
+# ---------------------------------Данные возращаемы с базы данных Сериалов---------------------------------------------
+# book_name = 'Test'
+# release = '0000'
+# style = 'Test'
+# seasons = 0 - n
 # ---------------------------------Данные возращаемы с базы данных Книг-------------------------------------------------
 # book_name = 'Test'
 # release = '0000'

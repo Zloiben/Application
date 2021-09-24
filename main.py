@@ -51,7 +51,7 @@ class Films(QMainWindow):
         # -----------------------------------Базовый вывод фильмов------------------------------------------------------
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, [{value[1]}], ({value[2]}), {value[3]}')
             count += 1
 
     # ----------------------------------------------Основные Критерии---------------------------------------------------
@@ -64,7 +64,7 @@ class Films(QMainWindow):
         self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, [{value[1]}],({value[2]}), {value[3]}')
             count += 1
 
     def output_of_films_by_date(self):
@@ -72,14 +72,14 @@ class Films(QMainWindow):
         self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, [{value[1]}], ({value[2]}), {value[3]}')
             count += 1
 
     def output_of_films_by_name(self):
         self.table_films.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-            self.table_films.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}')
+            self.table_films.appendPlainText(f'{count}. {value[0]}, [{value[1]}], ({value[2]}), {value[3]}')
             count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -107,21 +107,21 @@ class BooksComics(QMainWindow):
 
         count = 1
         for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
-            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            self.table_books.appendPlainText(f'{count}. {value[0]}, [{value[1]}], {value[2]}, ({value[3]}), {value[4]}')
             count += 1
 
     def output_of_books_by_date(self):
         self.table_books.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
-            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            self.table_books.appendPlainText(f'{count}. {value[0]}, [{value[1]}], {value[2]}, ({value[3]}), {value[4]}')
             count += 1
 
     def output_of_books_by_name(self):
         self.table_books.clear()
         count = 1
         for value in sql.execute("SELECT * FROM data_books ORDER BY book_name ASC"):
-            self.table_books.appendPlainText(f'{count}. {value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}')
+            self.table_books.appendPlainText(f'{count}. {value[0]}, [{value[1]}], {value[2]}, ({value[3]}), {value[4]}')
             count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
