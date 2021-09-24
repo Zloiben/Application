@@ -32,7 +32,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Книги и сериалы.</string>
+     <string>Книги и комиксы.</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="table_books">

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>500</height>
+    <width>907</width>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,17 +32,17 @@
      <string>Сериалы.</string>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="plainTextEdit">
+   <widget class="QPlainTextEdit" name="table_serials">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>371</width>
-      <height>391</height>
+      <width>501</width>
+      <height>601</height>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_rating_DESC_films">
+   <widget class="QPushButton" name="btn_rating_DESC_serials">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -55,7 +55,7 @@
      <string>По рейтингу</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_date_DESC_films">
+   <widget class="QPushButton" name="btn_date_DESC_serials">
     <property name="geometry">
      <rect>
       <x>80</x>
@@ -68,7 +68,7 @@
      <string>По дате</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_name_DESC_films">
+   <widget class="QPushButton" name="btn_name_DESC_serials">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -87,7 +87,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>700</width>
+     <width>907</width>
      <height>21</height>
     </rect>
    </property>

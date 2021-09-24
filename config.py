@@ -9,7 +9,8 @@ sql.execute("""CREATE TABLE IF NOT EXISTS data (
     film TEXT,
     rating REAL,
     release DATE,
-    style TEXT
+    style TEXT, 
+    description TEXT
 )""")
 db.commit()
 
@@ -26,35 +27,34 @@ db.commit()
 
 #
 
-sql.execute("""CREATE TABLE IF NOT EXISTS data_books (
-    book_name TEXT,
+sql.execute("""CREATE TABLE IF NOT EXISTS data_serials (
+    serial TEXT,
+    rating REAL,
     release DATE,
-    author TEXT,
     style TEXT,
-    toms INT
+    seasons INT
 )""")
 db.commit()
 
 
 # TODO: Увеличить базу данных
 # TODO: Добавить к переменной style еще несколько переменных для более точного поиска фильмов
-# TODO: Изменить возращаемые данные у переменой release, кроме release у Книг
-# '0000' -> '0000.00.00'
+
 # ---------------------------------Данные возращаемы с базы данных Сериалов---------------------------------------------
 # book_name = 'Test'
-# release = '0000'
+# release = 'YYYY-MM-DD'
 # style = 'Test'
 # seasons = 0 - n
 # ---------------------------------Данные возращаемы с базы данных Книг-------------------------------------------------
 # book_name = 'Test'
-# release = '0000'
+# release = 'YYYY'
 # author = 'Test'
 # style = 'Test'
 # toms = 0 - n , Количесвто томов или частей у книги
 # ---------------------------------Данные возращаемы с базы данных Фильмов----------------------------------------------
 # film = 'Test'
 # rating = 0 - 10
-# release = '0000'
+# release = 'YYYY-MM-DD'
 # style = 'test'
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -62,4 +62,4 @@ db.commit()
 # ASC - От меньшего к большему
 # DESC - От большего к меньшему
 #
-# SELECT * FROM data - Вывод информации с базы данных
+# SELECT * FROM ... - Вывод информации с базы данных
