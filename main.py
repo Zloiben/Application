@@ -55,7 +55,7 @@ class Films(QMainWindow):
                                              f'{value[0]}, '
                                              f'[{value[1]}], '
                                              f'({value[2]}), '
-                                             f'|{value[4]}|')
+                                             f'{value[4]}')
             count += 1
 
     # ----------------------------------------------Основные Критерии---------------------------------------------------
@@ -77,7 +77,7 @@ class Films(QMainWindow):
                                              f'{value[0]}, '
                                              f'[{value[1]}], '
                                              f'({value[2]}), '
-                                             f'|{value[4]}|')
+                                             f'{value[4]}')
             count += 1
 
     def output_of_films_by_date(self):
@@ -88,7 +88,7 @@ class Films(QMainWindow):
                                              f'{value[0]}, '
                                              f'[{value[1]}], '
                                              f'({value[2]}), '
-                                             f'|{value[4]}|')
+                                             f'{value[4]}')
             count += 1
 
     def output_of_films_by_name(self):
@@ -99,7 +99,7 @@ class Films(QMainWindow):
                                              f'{value[0]}, '
                                              f'[{value[1]}], '
                                              f'({value[2]}), '
-                                             f'|{value[4]}|')
+                                             f'{value[4]}')
             count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ class Serials(QMainWindow):
         #
 
         # №. serial, [rating], (release), style, seasons, description
-        #
+        # 1. Воскресший Эртугрул, [8.2], 2014-12-10, (боевик), |5|
 
         count = 1
         for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
@@ -189,8 +189,8 @@ class BooksComics(QMainWindow):
 
         #
 
-        # №. book_name, [release], author, (style), toms, description
-        # 4. Восхождение Героя Щита. Том 11, [2021], Кю Айя, (Манга), 12, Описание
+        # №. book_name, [release], author, (style), toms
+        # 4. Восхождение Героя Щита. Том 11, [2021], Кю Айя, (Манга), 12
 
         count = 1
         for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):

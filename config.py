@@ -32,7 +32,8 @@ sql.execute("""CREATE TABLE IF NOT EXISTS data_serials (
     rating REAL,
     release DATE,
     style TEXT,
-    seasons INT
+    seasons INT,
+    description TEXT
 )""")
 db.commit()
 
@@ -41,10 +42,12 @@ db.commit()
 # TODO: Добавить к переменной style еще несколько переменных для более точного поиска фильмов
 
 # ---------------------------------Данные возращаемы с базы данных Сериалов---------------------------------------------
-# book_name = 'Test'
+# serial = 'Test'
+# rating = 0 - 10
 # release = 'YYYY-MM-DD'
 # style = 'Test'
 # seasons = 0 - n
+# description = 'Test' -> Описание
 # ---------------------------------Данные возращаемы с базы данных Книг-------------------------------------------------
 # book_name = 'Test'
 # release = 'YYYY'
@@ -56,6 +59,7 @@ db.commit()
 # rating = 0 - 10
 # release = 'YYYY-MM-DD'
 # style = 'test'
+# description = 'Test' -> Описание
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Типы сортировки
