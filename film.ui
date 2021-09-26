@@ -20,7 +20,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>310</x>
       <y>0</y>
       <width>161</width>
       <height>41</height>
@@ -150,6 +150,19 @@
     </property>
     <property name="text">
      <string>Поиск</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_exit_films">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Назад</string>
     </property>
    </widget>
   </widget>

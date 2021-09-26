@@ -12,9 +12,10 @@ class Main(QMainWindow):
         super().__init__()
 
         #
+        global serial, films
 
-        self.films = Films()
-        self.serial = Serials()
+        films = Films()
+        serial = Serials()
         self.books_and_comics = BooksComics()
 
         #
@@ -27,16 +28,21 @@ class Main(QMainWindow):
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
 
+        self.btn_exit_main.clicked.connect(self.exit)
+
     def film_window(self):
-        self.films.show()
+        films.show()
         ex.close()
 
     def serial_window(self):
-        self.serial.show()
+        serial.show()
         ex.close()
 
     def books_and_comics_window(self):
         self.books_and_comics.show()
+        ex.close()
+
+    def exit(self):
         ex.close()
 
 
@@ -46,7 +52,7 @@ class Films(QMainWindow):
         super().__init__()
         uic.loadUi('film.ui', self)
 
-    # ----------------------------------------------Критерии------------------------------------------------------------
+    # ---------------------------------------------<Критерии>-----------------------------------------------------------
         self.data_criteria = set()
 
         # Критерии
@@ -61,19 +67,30 @@ class Films(QMainWindow):
         self.btn_date_DESC_films.clicked.connect(self.output_of_films_by_date)
         self.btn_name_DESC_films.clicked.connect(self.output_of_films_by_name)
 
+        self.btn_exit_films.clicked.connect(self.exit)
         #
 
         self.search_btn.clicked.connect(self.search_criteria)
+    # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
+        count = 1
+        for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
+            self.table_films.appendPlainText(f'{count}. '
+                                             f'{value[0]}, '
+                                             f'[{value[1]}], '
+                                             f'({value[2]}), '
+                                             f'{value[3]}, '
+                                             f'{value[4]}')
+            count += 1
 
-    # ----------------------------------------------Основные Критерии---------------------------------------------------
+    # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
     # №. film, [rating], (release), style, description
     # 1. Дюна, [8.1], (2021-09-09), Фантастика, Описание
 
     def output_of_films_by_rating(self):
         self.table_films.clear()
+        count = 1
         if len(self.data_criteria) > 0:
-            count = 1
             for value in sql.execute(f"""
                     SELECT * FROM data WHERE style in {self.sort()} ORDER BY rating DESC"""):
                 self.table_films.appendPlainText(f'{count}. '
@@ -84,7 +101,6 @@ class Films(QMainWindow):
                                                  f'{value[4]}')
                 count += 1
         else:
-            count = 1
             for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
                 self.table_films.appendPlainText(f'{count}. '
                                                  f'{value[0]}, '
@@ -92,12 +108,12 @@ class Films(QMainWindow):
                                                  f'({value[2]}), '
                                                  f'{value[3]}, '
                                                  f'{value[4]}')
-            count += 1
+                count += 1
 
     def output_of_films_by_date(self):
         self.table_films.clear()
+        count = 1
         if len(self.data_criteria) > 0:
-            count = 1
             for value in sql.execute(f"""
                         SELECT * FROM data WHERE style in {self.sort()} ORDER BY release DESC"""):
                 self.table_films.appendPlainText(f'{count}. '
@@ -108,7 +124,6 @@ class Films(QMainWindow):
                                                  f'{value[4]}')
                 count += 1
         else:
-            count = 1
             for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
                 self.table_films.appendPlainText(f'{count}. '
                                                  f'{value[0]}, '
@@ -120,8 +135,8 @@ class Films(QMainWindow):
 
     def output_of_films_by_name(self):
         self.table_films.clear()
+        count = 1
         if len(self.data_criteria) > 0:
-            count = 1
             for value in sql.execute(f"""
                                     SELECT * FROM data WHERE style in {self.sort()} ORDER BY film ASC"""):
                 self.table_films.appendPlainText(f'{count}. '
@@ -132,7 +147,6 @@ class Films(QMainWindow):
                                                  f'{value[4]}')
                 count += 1
         else:
-            count = 1
             for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
                 self.table_films.appendPlainText(f'{count}. '
                                                  f'{value[0]}, '
@@ -170,6 +184,12 @@ class Films(QMainWindow):
                                              f'{value[4]}')
             count += 1
 
+    #  -----------------------------------------------------------------------------------------------------------------
+
+    def exit(self):
+        films.close()
+        ex.show()
+
 
 class Serials(QMainWindow):
 
@@ -188,6 +208,7 @@ class Serials(QMainWindow):
         self.checkBox_3.clicked.connect(self.serials_sort)
 
         self.pushButton.clicked.connect(self.search_criteria)
+        self.btn_exit_serials.clicked.connect(self.exit)
 
         # Кнопки Основных критерий
 
@@ -319,6 +340,12 @@ class Serials(QMainWindow):
                                                f'{value[4]}, '
                                                f'|{value[5]}|')
             count += 1
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def exit(self):
+        serial.close()
+        ex.show()
 
 
 class BooksComics(QMainWindow):
