@@ -46,63 +46,129 @@ class Films(QMainWindow):
         super().__init__()
         uic.loadUi('film.ui', self)
 
-        # TODO: Сделать сортировку по Критериям пользователя
+    # ----------------------------------------------Критерии------------------------------------------------------------
+        self.data_criteria = set()
 
-        # -----------------------------------Базовый вывод фильмов------------------------------------------------------
-        count = 1
-        for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_films.appendPlainText(f'{count}. '
-                                             f'{value[0]}, '
-                                             f'[{value[1]}], '
-                                             f'({value[2]}), '
-                                             f'{value[4]}')
-            count += 1
+        # Критерии
 
-    # ----------------------------------------------Основные Критерии---------------------------------------------------
-    # Кнопки Основных критерий
+        self.checkBox.clicked.connect(self.films_sort)
+        self.checkBox_2.clicked.connect(self.films_sort)
+        self.checkBox_3.clicked.connect(self.films_sort)
+
+        #
+
         self.btn_rating_DESC_films.clicked.connect(self.output_of_films_by_rating)
         self.btn_date_DESC_films.clicked.connect(self.output_of_films_by_date)
         self.btn_name_DESC_films.clicked.connect(self.output_of_films_by_name)
 
-    #
+        #
+
+        self.search_btn.clicked.connect(self.search_criteria)
+
+    # ----------------------------------------------Основные Критерии---------------------------------------------------
 
     # №. film, [rating], (release), style, description
     # 1. Дюна, [8.1], (2021-09-09), Фантастика, Описание
 
     def output_of_films_by_rating(self):
         self.table_films.clear()
-        count = 1
-        for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_films.appendPlainText(f'{count}. '
-                                             f'{value[0]}, '
-                                             f'[{value[1]}], '
-                                             f'({value[2]}), '
-                                             f'{value[4]}')
+        if len(self.data_criteria) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                    SELECT * FROM data WHERE style in {self.sort()} ORDER BY rating DESC"""):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
             count += 1
 
     def output_of_films_by_date(self):
         self.table_films.clear()
-        count = 1
-        for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-            self.table_films.appendPlainText(f'{count}. '
-                                             f'{value[0]}, '
-                                             f'[{value[1]}], '
-                                             f'({value[2]}), '
-                                             f'{value[4]}')
-            count += 1
+        if len(self.data_criteria) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                        SELECT * FROM data WHERE style in {self.sort()} ORDER BY release DESC"""):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
+                count += 1
 
     def output_of_films_by_name(self):
         self.table_films.clear()
+        if len(self.data_criteria) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                                    SELECT * FROM data WHERE style in {self.sort()} ORDER BY film ASC"""):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
+                self.table_films.appendPlainText(f'{count}. '
+                                                 f'{value[0]}, '
+                                                 f'[{value[1]}], '
+                                                 f'({value[2]}), '
+                                                 f'{value[3]}, '
+                                                 f'{value[4]}')
+                count += 1
+
+    # --------------------------------------------Сортировка Критерий---------------------------------------------------
+
+        # Входные данные: {'Фантастика', 'Ужасы'}
+        # Возращает: ('Фантастика', 'Ужасы')
+        # Нужно для команды в базу данных и для избежание не верных выводов данных
+        # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
+
+    def sort(self):
+        return f'''('{"', '".join(self.data_criteria)}')'''
+
+    def films_sort(self, state):
+        if state:
+            self.data_criteria.add(self.sender().text())
+        else:
+            self.data_criteria.remove(self.sender().text())
+
+    def search_criteria(self):
+        self.table_films.clear()
         count = 1
-        for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
+        for value in sql.execute(f"SELECT * FROM data WHERE style in {self.sort()} ORDER BY rating DESC"):
             self.table_films.appendPlainText(f'{count}. '
                                              f'{value[0]}, '
                                              f'[{value[1]}], '
                                              f'({value[2]}), '
+                                             f'{value[3]}, '
                                              f'{value[4]}')
             count += 1
-
-    # ------------------------------------------------------------------------------------------------------------------
 
 
 class Serials(QMainWindow):
@@ -113,7 +179,16 @@ class Serials(QMainWindow):
 
         # TODO: Добавить сортировку по критериям пользователя
 
-    # ----------------------------------------------Основные Критерии---------------------------------------------------
+        self.data_criteria_serials = set()
+
+        # Критерии
+
+        self.checkBox.clicked.connect(self.serials_sort)
+        self.checkBox_2.clicked.connect(self.serials_sort)
+        self.checkBox_3.clicked.connect(self.serials_sort)
+
+        self.pushButton.clicked.connect(self.search_criteria)
+
         # Кнопки Основных критерий
 
         self.btn_date_DESC_serials.clicked.connect(self.output_of_serials_by_date)
@@ -122,8 +197,9 @@ class Serials(QMainWindow):
 
         #
 
+    # ----------------------------------------------Основные Критерии---------------------------------------------------
         # №. serial, [rating], (release), style, seasons, description
-        # 1. Воскресший Эртугрул, [8.2], 2014-12-10, (боевик), |5|
+        # 1. Воскресший Эртугрул, [8.2], 2014-12-10, (боевик), 5, |Описание|
 
         count = 1
         for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
@@ -132,46 +208,117 @@ class Serials(QMainWindow):
                                                f'[{value[1]}], '
                                                f'{value[2]}, '
                                                f'({value[3]}), '
-                                               f'|{value[4]}|')
+                                               f'{value[4]}, '
+                                               f'|{value[5]}|')
             count += 1
 
     def output_of_serials_by_rating(self):
         self.table_serials.clear()
-        count = 1
-        for value in sql.execute("SELECT * FROM data_serials ORDER BY rating DESC"):
-            self.table_serials.appendPlainText(f'{count}. '
-                                               f'{value[0]}, '
-                                               f'[{value[1]}], '
-                                               f'{value[2]}, '
-                                               f'({value[3]}), '
-                                               f'|{value[4]}|')
-            count += 1
+        if len(self.data_criteria_serials) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY rating DESC"""):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("SELECT * FROM data_serials ORDER BY rating DESC"):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
 
     def output_of_serials_by_date(self):
         self.table_serials.clear()
-        count = 1
-        for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
-            self.table_serials.appendPlainText(f'{count}. '
-                                               f'{value[0]}, '
-                                               f'[{value[1]}], '
-                                               f'{value[2]}, '
-                                               f'({value[3]}), '
-                                               f'|{value[4]}|')
-            count += 1
+        if len(self.data_criteria_serials) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY release DESC"""):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
 
     def output_of_serials_by_name(self):
         self.table_serials.clear()
+        if len(self.data_criteria_serials) > 0:
+            count = 1
+            for value in sql.execute(f"""
+                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY serial ASC"""):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
+        else:
+            count = 1
+            for value in sql.execute("""
+                    SELECT * FROM data_serials ORDER BY serial ASC"""):
+                self.table_serials.appendPlainText(f'{count}. '
+                                                   f'{value[0]}, '
+                                                   f'[{value[1]}], '
+                                                   f'{value[2]}, '
+                                                   f'({value[3]}), '
+                                                   f'{value[4]}, '
+                                                   f'|{value[5]}|')
+                count += 1
+
+    # --------------------------------------------Сортировка Критерий---------------------------------------------------
+
+    # Входные данные: {'Фантастика', 'Ужасы'}
+    # Возращает: ('Фантастика', 'Ужасы')
+    # Нужно для команды в базу данных и для избежание не верных выводов данных
+    # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
+
+    def sort(self):
+        return f'''('{"', '".join(self.data_criteria_serials)}')'''
+
+    def serials_sort(self, state):
+        if state:
+            self.data_criteria_serials.add(self.sender().text())
+        else:
+            self.data_criteria_serials.remove(self.sender().text())
+
+    def search_criteria(self):
+        self.table_serials.clear()
         count = 1
-        for value in sql.execute("SELECT * FROM data_serials ORDER BY serial ASC"):
+        for value in sql.execute(f"SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY rating DESC"):
             self.table_serials.appendPlainText(f'{count}. '
                                                f'{value[0]}, '
                                                f'[{value[1]}], '
-                                               f'{value[2]}, '
-                                               f'({value[3]}), '
-                                               f'|{value[4]}|')
+                                               f'({value[2]}), '
+                                               f'{value[3]}, '
+                                               f'{value[4]}, '
+                                               f'|{value[5]}|')
             count += 1
-
-    # ------------------------------------------------------------------------------------------------------------------
 
 
 class BooksComics(QMainWindow):
