@@ -37,9 +37,15 @@
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>501</width>
+      <width>621</width>
       <height>601</height>
      </rect>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_rating_DESC_serials">
@@ -84,7 +90,7 @@
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>630</x>
       <y>80</y>
       <width>70</width>
       <height>17</height>
@@ -97,7 +103,7 @@
    <widget class="QCheckBox" name="checkBox_2">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>710</x>
       <y>80</y>
       <width>70</width>
       <height>17</height>
@@ -110,7 +116,7 @@
    <widget class="QCheckBox" name="checkBox_3">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>790</x>
       <y>80</y>
       <width>91</width>
       <height>16</height>
@@ -123,7 +129,7 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>800</x>
       <y>120</y>
       <width>75</width>
       <height>23</height>
