@@ -6,12 +6,51 @@ from config import *
 # TODO: Улутшить интерфейс программы
 
 
-def film_window():
-    films.show()
-    ex.close()
-
-
 class Main(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        #
+
+        global the_world_of_books_movies_and_series, translator
+
+        the_world_of_books_movies_and_series = The_world_of_books_movies_and_series()
+        translator = Translator()
+
+        #
+
+        uic.loadUi('main_main.ui', self)
+
+        #
+
+        self.pushButton.clicked.connect(self.translator_window)
+        self.pushButton_2.clicked.connect(self.the_world_of_books_movies_and_series_window)
+
+        #
+
+    def the_world_of_books_movies_and_series_window(self):
+        the_world_of_books_movies_and_series.show()
+        ex.close()
+
+    def translator_window(self):
+        translator.show()
+        ex.close()
+
+
+class Translator(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        #
+
+        uic.loadUi('translation.ui', self)
+
+        #
+
+
+class The_world_of_books_movies_and_series(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -30,22 +69,28 @@ class Main(QMainWindow):
 
         #
 
-        self.btn_films.clicked.connect(film_window)
+        self.btn_films.clicked.connect(self.film_window)
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
 
         self.btn_exit_main.clicked.connect(self.exit)
 
     def serial_window(self):
+        the_world_of_books_movies_and_series.close()
         serial.show()
-        ex.close()
 
     def books_and_comics_window(self):
         books_and_comics.show()
-        ex.close()
+        the_world_of_books_movies_and_series.close()
+
+    def film_window(self):
+        films.show()
+        the_world_of_books_movies_and_series.close()
 
     def exit(self):
-        ex.close()
+        # TODO: Изменить Выход на -> Назад
+        the_world_of_books_movies_and_series.close()
+        ex.show()
 
 
 class Films(QMainWindow):
@@ -195,7 +240,7 @@ class Films(QMainWindow):
 
     def exit(self):
         films.close()
-        ex.show()
+        the_world_of_books_movies_and_series.show()
 
 
 class Serials(QMainWindow):
@@ -355,7 +400,7 @@ class Serials(QMainWindow):
 
     def exit(self):
         serial.close()
-        ex.show()
+        the_world_of_books_movies_and_series.show()
 
 
 class BooksComics(QMainWindow):
@@ -400,7 +445,7 @@ class BooksComics(QMainWindow):
 
     def output_of_books_by_date(self):
         self.table_books.clear()
-        self.table_books('№. book_name, [release], author, (style), |toms|\n')
+        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
         count = 1
         if len(self.data_criteria_books) > 0:
             for value in sql.execute(f"SELECT * FROM data_books WHERE style in {self.sort()} ORDER BY release DESC"):
@@ -423,7 +468,7 @@ class BooksComics(QMainWindow):
 
     def output_of_books_by_name(self):
         self.table_books.clear()
-        self.table_books('№. book_name, [release], author, (style), |toms|\n')
+        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
         count = 1
         if len(self.data_criteria_books) > 0:
             for value in sql.execute(f"SELECT * FROM data_books WHERE style in {self.sort()} ORDER BY book_name ASC"):
@@ -477,7 +522,7 @@ class BooksComics(QMainWindow):
 
     def exit(self):
         books_and_comics.close()
-        ex.show()
+        the_world_of_books_movies_and_series.show()
 
 
 if __name__ == '__main__':
