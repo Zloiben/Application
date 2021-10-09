@@ -169,6 +169,10 @@ class Films(QMainWindow):
         super().__init__()
         uic.loadUi('ui/film.ui', self)
 
+    # --------------------------------------------<Фукции при запуски>--------------------------------------------------
+
+        self.basic_output()
+
     # ---------------------------------------------<Кнопки>-------------------------------------------------------------
 
         # Добавляются и удаляются критерии |films_sort| -> Нужно для запроса в базу данных
@@ -192,8 +196,7 @@ class Films(QMainWindow):
 
         self.btn_exit_films.clicked.connect(self.exit)
 
-        # Кнопка поиска фильмов -> должа выводить полную информацию по названию фильм
-        # TODO: Сделать поиск
+        # Кнопка поиска по критериям
 
         self.search_btn.clicked.connect(self.search_criteria)
 
@@ -201,129 +204,171 @@ class Films(QMainWindow):
 
         self.table_films.clicked.connect(self.movie_selection)
 
+        # TODO: Создать поиск фильмов по названию
+
+    # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
+
+    def the_order_of_output_from_the_database(self):
+        # Функция только выводит
+
+        self.table_films.addItem('№. film, [rating], nation, (release), style, age')
+
+    def creating_request(self):
+
+        # Входные данные множество жанров -> {'Фантастика', 'Ужасы'}
+        # Возращает для отправки запроса в базу данных -> ('Фантастика', 'Ужасы')
+        # Пример запроса:
+        # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
+
+        return f'''('{"', '".join(self.data_criteria)}')'''
+
     # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
 
+    def basic_output(self):
         count = 1
-        self.table_films.addItem('№. film, [rating], (release), style')
+        self.the_order_of_output_from_the_database()
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
             self.table_films.addItem(f'{count}. '
                                      f'{value[0]}, '
                                      f'[{value[1]}], '
-                                     f'({value[2]}), '
-                                     f'{value[3]}')
+                                     f'{value[2]}, '
+                                     f'({value[3]}), '
+                                     f'{value[4]}, '
+                                     f'{value[5]}')
             count += 1
 
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
 
     def movie_selection(self):
-        print(self.table_films.currentItem().text()[3:].split(", "))
-        # -> ['Шан-Чи и легенда десяти колец', '[7.3]', '(2021-06-25)', 'Фантастика']
-        if "Шан-Чи и легенда десяти колец" in self.table_films.currentItem().text():
-            self.images_search()
-        else:
-            pass
+        selected_movie = self.table_films.currentItem().text()[3:].split(", ")
+        # -> ['Шан-Чи и легенда десяти колец', '[7.3]', 'США', '(Фантастика)', 16+]
+        self.information_output(selected_movie[0])
 
-    def images_search(self):
-        pixmap = QPixmap('images/Шан-Чи и легенда десяти колец.jpg')
-        self.image.setPixmap(pixmap)
+    def information_output(self, image_name):
+
+        for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
+
+            # Изображение
+
+            pixmap = QPixmap('images_data/' + f'{value[7]}')
+            self.image.setPixmap(pixmap)
+
+            # Остальная информация
+
+            self.output_rating.setText(f'{value[1]}')
+            self.output_age.setText(f'{value[5]}')
+            self.output_date.setText(f'{value[4]}')
+            self.output_nation.setText(f'{value[2]}')
+            self.output_style.setText(f'{value[3]}')
+            self.name_film.setText(f'{value[0]}')
+            self.table_description.appendPlainText(f'{value[6]}')
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
-    # №. film, [rating], (release), style, |description|
-    # 1. Дюна, [8.1], (2021-09-09), Фантастика, Описание
-
     def output_of_films_by_rating(self):
         self.table_films.clear()
-        self.table_films.addItem('№. film, [rating], (release), style, |description|\n')
+        self.the_order_of_output_from_the_database()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                    SELECT * FROM data WHERE style in {self.sort()} ORDER BY rating DESC"""):
+                    SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"""):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
 
     def output_of_films_by_date(self):
         self.table_films.clear()
-        self.table_films.addItem('№. film, [rating], (release), style, |description|\n')
+        self.the_order_of_output_from_the_database()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                        SELECT * FROM data WHERE style in {self.sort()} ORDER BY release DESC"""):
+                        SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY release DESC"""):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
 
     def output_of_films_by_name(self):
         self.table_films.clear()
-        self.table_films.addItem('№. film, [rating], (release), style, |description|\n')
+        self.the_order_of_output_from_the_database()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                                    SELECT * FROM data WHERE style in {self.sort()} ORDER BY film ASC"""):
+                                    SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY film ASC"""):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
                 self.table_films.addItem(f'{count}. '
                                          f'{value[0]}, '
                                          f'[{value[1]}], '
-                                         f'({value[2]}), '
-                                         f'{value[3]}')
+                                         f'{value[2]}, '
+                                         f'({value[3]}), '
+                                         f'{value[4]}, '
+                                         f'{value[5]}')
                 count += 1
 
     # --------------------------------------------Сортировка Критерий---------------------------------------------------
 
-    # Входные данные: {'Фантастика', 'Ужасы'}
-    # Возращает: ('Фантастика', 'Ужасы')
-    # Нужно для команды в базу данных и для избежание не верных выводов данных
-    # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
-
-    def sort(self):
-        return f'''('{"', '".join(self.data_criteria)}')'''
-
     def films_sort(self, state):
+
+        # Добавление и удалений из множества категорий
+
         if state:
             self.data_criteria.add(self.sender().text())
         else:
             self.data_criteria.remove(self.sender().text())
 
     def search_criteria(self):
+
+        # Поиск по критериям
+
         self.table_films.clear()
-        self.table_films.addItem('№. film, [rating], (release), style, |description|\n')
+        self.the_order_of_output_from_the_database()
         count = 1
-        for value in sql.execute(f"SELECT * FROM data WHERE style in {self.sort()} ORDER BY rating DESC"):
+        for value in sql.execute(f"SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"):
             self.table_films.addItem(f'{count}. '
                                      f'{value[0]}, '
                                      f'[{value[1]}], '
-                                     f'({value[2]}), '
-                                     f'{value[3]}')
+                                     f'{value[2]}, '
+                                     f'({value[3]}), '
+                                     f'{value[4]}, '
+                                     f'{value[5]}')
             count += 1
 
     #  -----------------------------------------------------------------------------------------------------------------
