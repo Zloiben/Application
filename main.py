@@ -40,7 +40,6 @@ sql = db.cursor()
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
 
@@ -169,6 +168,13 @@ class Films(QMainWindow):
         super().__init__()
         uic.loadUi('ui/film.ui', self)
 
+    # ----------------------------------------------<Идеи для добавления>-----------------------------------------------
+
+        # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
+        # Если будет сделано то нужно не забыть выводить главных герояв в подробной информации
+
+        # TODO: Добавить в подробную информацию -> чей фильм
+
     # --------------------------------------------<Фукции при запуски>--------------------------------------------------
 
         self.basic_output()
@@ -196,21 +202,17 @@ class Films(QMainWindow):
 
         self.btn_exit_films.clicked.connect(self.exit)
 
-        # Кнопка поиска по критериям
+        # Кнопка поиска по введенному фильму
 
-        self.search_btn.clicked.connect(self.search_criteria)
+        self.search_btn.clicked.connect(self.search)
 
         # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
 
         self.table_films.clicked.connect(self.movie_selection)
 
-        # TODO: Создать поиск фильмов по названию
-
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
 
     def the_order_of_output_from_the_database(self):
-        # Функция только выводит
-
         self.table_films.addItem('№. film, [rating], nation, (release), style, age')
 
     def creating_request(self):
@@ -222,19 +224,22 @@ class Films(QMainWindow):
 
         return f'''('{"', '".join(self.data_criteria)}')'''
 
+    def table_film_add_item(self, value, count):
+        self.table_films.addItem(f'{count}. '
+                                 f'{value[0]}, '
+                                 f'[{value[1]}], '
+                                 f'{value[2]}, '
+                                 f'({value[3]}), '
+                                 f'{value[4]}, '
+                                 f'{value[5]}')
+
     # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
 
     def basic_output(self):
         count = 1
         self.the_order_of_output_from_the_database()
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_films.addItem(f'{count}. '
-                                     f'{value[0]}, '
-                                     f'[{value[1]}], '
-                                     f'{value[2]}, '
-                                     f'({value[3]}), '
-                                     f'{value[4]}, '
-                                     f'{value[5]}')
+            self.table_film_add_item(value, count)
             count += 1
 
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
@@ -242,9 +247,12 @@ class Films(QMainWindow):
     def movie_selection(self):
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
         # -> ['Шан-Чи и легенда десяти колец', '[7.3]', 'США', '(Фантастика)', 16+]
-        self.information_output(selected_movie[0])
+        if selected_movie[0] != 'film':
+            self.information_output(selected_movie[0])
 
     def information_output(self, image_name):
+
+        self.table_description.clear()
 
         for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
 
@@ -272,23 +280,11 @@ class Films(QMainWindow):
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                     SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"""):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
 
     def output_of_films_by_date(self):
@@ -298,23 +294,11 @@ class Films(QMainWindow):
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                         SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY release DESC"""):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
 
     def output_of_films_by_name(self):
@@ -324,35 +308,28 @@ class Films(QMainWindow):
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                                     SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY film ASC"""):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-                self.table_films.addItem(f'{count}. '
-                                         f'{value[0]}, '
-                                         f'[{value[1]}], '
-                                         f'{value[2]}, '
-                                         f'({value[3]}), '
-                                         f'{value[4]}, '
-                                         f'{value[5]}')
+                self.table_film_add_item(value, count)
                 count += 1
 
-    # --------------------------------------------Сортировка Критерий---------------------------------------------------
+    # --------------------------------------------Сортировка по Критериям-----------------------------------------------
+
+    def search(self):
+        self.information_output(self.input_search.text())
 
     def films_sort(self, state):
 
-        # Добавление и удалений из множества категорий
+        # Добавление и удалений из множества категорий так же сразу осуществляется сортировка
 
         if state:
             self.data_criteria.add(self.sender().text())
         else:
             self.data_criteria.remove(self.sender().text())
+
+        self.search_criteria()
 
     def search_criteria(self):
 
@@ -362,13 +339,7 @@ class Films(QMainWindow):
         self.the_order_of_output_from_the_database()
         count = 1
         for value in sql.execute(f"SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"):
-            self.table_films.addItem(f'{count}. '
-                                     f'{value[0]}, '
-                                     f'[{value[1]}], '
-                                     f'{value[2]}, '
-                                     f'({value[3]}), '
-                                     f'{value[4]}, '
-                                     f'{value[5]}')
+            self.table_film_add_item(value, count)
             count += 1
 
     #  -----------------------------------------------------------------------------------------------------------------
@@ -380,6 +351,8 @@ class Films(QMainWindow):
 
 
 class Serials(QMainWindow):
+
+    # TODO: Сделал пример -> нужно переделать под сериалы
 
     def __init__(self):
         super().__init__()
