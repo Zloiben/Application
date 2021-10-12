@@ -71,7 +71,7 @@
      <string>По названию</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="btn_search_serials">
     <property name="geometry">
      <rect>
       <x>1010</x>
@@ -160,7 +160,7 @@
      </attribute>
     </widget>
    </widget>
-   <widget class="QListWidget" name="listWidget">
+   <widget class="QListWidget" name="table_serials">
     <property name="geometry">
      <rect>
       <x>560</x>
@@ -193,18 +193,18 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>592</y>
+      <x>70</x>
+      <y>590</y>
       <width>141</width>
       <height>141</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="output_film">
+    <layout class="QVBoxLayout" name="output_serials">
      <property name="rightMargin">
       <number>9</number>
      </property>
      <item>
-      <widget class="QLabel" name="output_rating">
+      <widget class="QLabel" name="output_rating_serials">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -214,7 +214,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_nation">
+      <widget class="QLabel" name="output_nation_serials">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -224,7 +224,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_style">
+      <widget class="QLabel" name="output_style_serials">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -234,7 +234,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_age">
+      <widget class="QLabel" name="output_age_serials">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -244,7 +244,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_date">
+      <widget class="QLabel" name="output_data_serials">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -264,9 +264,9 @@
       <height>141</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="requests_film">
+    <layout class="QVBoxLayout" name="requests_serials">
      <item>
-      <widget class="QLabel" name="rating">
+      <widget class="QLabel" name="rating_serials">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -280,7 +280,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="nation">
+      <widget class="QLabel" name="nation_serials">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -294,7 +294,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="style">
+      <widget class="QLabel" name="style_serials">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -308,7 +308,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="age">
+      <widget class="QLabel" name="age_serials">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -322,7 +322,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="date">
+      <widget class="QLabel" name="date_serials">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -337,7 +337,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPlainTextEdit" name="plainTextEdit">
+   <widget class="QPlainTextEdit" name="table_description_serials">
     <property name="geometry">
      <rect>
       <x>0</x>

@@ -3,42 +3,11 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
 from translate import Translator
-
-# ----------------------------------------------<База Данных>-----------------------------------------------------------
-
 import sqlite3
 
 db = sqlite3.connect("database.db")
 sql = db.cursor()
 
-# --------------------------------<Данные возращаемы с базы данных Сериалов>--------------------------------------------
-# serial = 'Test'
-# rating = 0 - 10
-# release = 'YYYY-MM-DD'
-# style = 'Test'
-# seasons = 0 - n
-# description = 'Test' -> Описание
-# --------------------------------<Данные возращаемы с базы данных Книг>------------------------------------------------
-# book_name = 'Test'
-# release = 'YYYY'
-# author = 'Test'
-# style = 'Test'
-# toms = 0 - n , Количесвто томов или частей у книги
-# --------------------------------<Данные возращаемы с базы данных Фильмов>---------------------------------------------
-# film = 'Test'
-# rating = 0 - 10
-# release = 'YYYY-MM-DD'
-# style = 'test'
-# description = 'Test' -> Описание
-# ----------------------------------------------------------------------------------------------------------------------
-
-# Типы сортировки
-# ASC - От меньшего к большему
-# DESC - От большего к меньшему
-#
-# SELECT * FROM ... - Вывод информации с базы данных
-
-# ----------------------------------------------------------------------------------------------------------------------
 
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
@@ -177,9 +146,9 @@ class Films(QMainWindow):
 
     # --------------------------------------------<Фукции при запуски>--------------------------------------------------
 
-        self.basic_output()
+        self.basic_output_films()
 
-    # ---------------------------------------------<Кнопки>-------------------------------------------------------------
+    # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
 
         # Добавляются и удаляются критерии |films_sort| -> Нужно для запроса в базу данных
 
@@ -198,24 +167,21 @@ class Films(QMainWindow):
         self.btn_date_DESC_films.clicked.connect(self.output_of_films_by_date)
         self.btn_name_DESC_films.clicked.connect(self.output_of_films_by_name)
 
-        # Кнопка выхода -> Возращает на предыдущие окно
+        # Кнопки
 
         self.btn_exit_films.clicked.connect(self.exit)
-
-        # Кнопка поиска по введенному фильму
-
-        self.search_btn.clicked.connect(self.search)
+        self.btn_search_films.clicked.connect(self.search_films)
 
         # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
 
-        self.table_films.clicked.connect(self.movie_selection)
+        self.table_films.clicked.connect(self.movie_selection_films)
 
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
 
-    def the_order_of_output_from_the_database(self):
+    def the_order_of_output_from_the_database_films(self):
         self.table_films.addItem('№. film, [rating], nation, (release), style, age')
 
-    def creating_request(self):
+    def creating_request_films(self):
 
         # Входные данные множество жанров -> {'Фантастика', 'Ужасы'}
         # Возращает для отправки запроса в базу данных -> ('Фантастика', 'Ужасы')
@@ -224,7 +190,7 @@ class Films(QMainWindow):
 
         return f'''('{"', '".join(self.data_criteria)}')'''
 
-    def table_film_add_item(self, value, count):
+    def table_film_add_item_films(self, value, count):
         self.table_films.addItem(f'{count}. '
                                  f'{value[0]}, '
                                  f'[{value[1]}], '
@@ -235,31 +201,31 @@ class Films(QMainWindow):
 
     # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
 
-    def basic_output(self):
+    def basic_output_films(self):
         count = 1
-        self.the_order_of_output_from_the_database()
+        self.the_order_of_output_from_the_database_films()
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_film_add_item(value, count)
+            self.table_film_add_item_films(value, count)
             count += 1
 
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
 
-    def movie_selection(self):
+    def movie_selection_films(self):
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
         # -> ['Шан-Чи и легенда десяти колец', '[7.3]', 'США', '(Фантастика)', 16+]
         if selected_movie[0] != 'film':
-            self.information_output(selected_movie[0])
+            self.information_output_films(selected_movie[0])
 
-    def information_output(self, image_name):
+    def information_output_films(self, image_name):
 
-        self.table_description.clear()
+        self.table_description_films.clear()
 
         for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
 
             # Изображение
 
-            pixmap = QPixmap('images_data/' + f'{value[7]}')
-            self.image.setPixmap(pixmap)
+            pixmap = QPixmap('images_data/images_films/' + f'{value[7]}')
+            self.image_films.setPixmap(pixmap)
 
             # Остальная информация
 
@@ -269,56 +235,56 @@ class Films(QMainWindow):
             self.output_nation.setText(f'{value[2]}')
             self.output_style.setText(f'{value[3]}')
             self.name_film.setText(f'{value[0]}')
-            self.table_description.appendPlainText(f'{value[6]}')
+            self.table_description_films.appendPlainText(f'{value[6]}')
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
     def output_of_films_by_rating(self):
         self.table_films.clear()
-        self.the_order_of_output_from_the_database()
+        self.the_order_of_output_from_the_database_films()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                    SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"""):
-                self.table_film_add_item(value, count)
+                    SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY rating DESC"""):
+                self.table_film_add_item_films(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-                self.table_film_add_item(value, count)
+                self.table_film_add_item_films(value, count)
                 count += 1
 
     def output_of_films_by_date(self):
         self.table_films.clear()
-        self.the_order_of_output_from_the_database()
+        self.the_order_of_output_from_the_database_films()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                        SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY release DESC"""):
-                self.table_film_add_item(value, count)
+                        SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY release DESC"""):
+                self.table_film_add_item_films(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-                self.table_film_add_item(value, count)
+                self.table_film_add_item_films(value, count)
                 count += 1
 
     def output_of_films_by_name(self):
         self.table_films.clear()
-        self.the_order_of_output_from_the_database()
+        self.the_order_of_output_from_the_database_films()
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                                    SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY film ASC"""):
-                self.table_film_add_item(value, count)
+                                SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY film ASC"""):
+                self.table_film_add_item_films(value, count)
                 count += 1
         else:
             for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-                self.table_film_add_item(value, count)
+                self.table_film_add_item_films(value, count)
                 count += 1
 
     # --------------------------------------------Сортировка по Критериям-----------------------------------------------
 
-    def search(self):
-        self.information_output(self.input_search.text())
+    def search_films(self):
+        self.information_output_films(self.input_search.text())
 
     def films_sort(self, state):
 
@@ -329,17 +295,18 @@ class Films(QMainWindow):
         else:
             self.data_criteria.remove(self.sender().text())
 
-        self.search_criteria()
+        self.search_criteria_films()
 
-    def search_criteria(self):
+    def search_criteria_films(self):
 
         # Поиск по критериям
 
         self.table_films.clear()
-        self.the_order_of_output_from_the_database()
+        self.the_order_of_output_from_the_database_films()
         count = 1
-        for value in sql.execute(f"SELECT * FROM data WHERE style in {self.creating_request()} ORDER BY rating DESC"):
-            self.table_film_add_item(value, count)
+        for value in sql.execute(f"""
+                            SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY rating DESC"""):
+            self.table_film_add_item_films(value, count)
             count += 1
 
     #  -----------------------------------------------------------------------------------------------------------------
@@ -358,6 +325,10 @@ class Serials(QMainWindow):
         super().__init__()
         uic.loadUi('ui/serials.ui', self)
 
+        self.basic_output_serials()
+
+    # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
+
         self.data_criteria_serials = set()
 
         # Критерии
@@ -366,7 +337,9 @@ class Serials(QMainWindow):
         self.checkBox_2.clicked.connect(self.serials_sort)
         self.checkBox_3.clicked.connect(self.serials_sort)
 
-        self.pushButton.clicked.connect(self.search_criteria)
+        # Кнопки
+
+        self.btn_search_serials.clicked.connect(self.search_criteria_serials)
         self.btn_exit_serials.clicked.connect(self.exit)
 
         # Кнопки Основных критерий
@@ -375,116 +348,120 @@ class Serials(QMainWindow):
         self.btn_name_DESC_serials.clicked.connect(self.output_of_serials_by_name)
         self.btn_rating_DESC_serials.clicked.connect(self.output_of_serials_by_rating)
 
-        #
+        # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
+
+        self.table_serials.clicked.connect(self.movie_selection_serials)
+
+    # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
+
+    def the_order_of_output_from_the_database_serials(self):
+        self.table_serials.addItem('№. serials, [rating], nation, (release), style, age, |seasons|')
+
+    def creating_request_serials(self):
+
+        # Входные данные множество жанров -> {'Фантастика', 'Ужасы'}
+        # Возращает для отправки запроса в базу данных -> ('Фантастика', 'Ужасы')
+        # Пример запроса:
+        # SELECT * FROM data_serials WHERE style in ('Фантастика', 'Ужасы')
+
+        return f'''('{"', '".join(self.data_criteria_serials)}')'''
+
+    def table_film_add_item_serials(self, value, count):
+        self.table_serials.addItem(f'{count}. '
+                                   f'{value[0]}, '
+                                   f'[{value[1]}], '
+                                   f'{value[2]}, '
+                                   f'({value[3]}), '
+                                   f'{value[4]}, '
+                                   f'{value[5]}, '
+                                   f'|{value[6]}|')
+
+    # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
+
+    def basic_output_serials(self):
+        count = 1
+        self.the_order_of_output_from_the_database_serials()
+        for value in sql.execute("SELECT * FROM data_serials ORDER BY rating DESC"):
+            self.table_film_add_item_serials(value, count)
+            count += 1
+
+    # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
+
+    def movie_selection_serials(self):
+        selected_movie_serials = self.table_serials.currentItem().text()[3:].split(", ")
+        # -> ['Рик и Морти', '[9.0]', 'США', '(2014-09-08)', 'Мультфильм', '18+', '5']
+        if selected_movie_serials[0] != 'serials':
+            self.information_output_serials(selected_movie_serials[0])
+
+    def information_output_serials(self, image_name):
+
+        self.table_description_serials.clear()
+        for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{image_name}'"):
+
+            # Изображение
+
+            pixmap = QPixmap('images_data/images_serials/' + f'{value[8]}')
+            self.image.setPixmap(pixmap)
+
+            # Остальная информация
+
+            self.output_rating_serials.setText(f'{value[1]}')
+            self.output_age_serials.setText(f'{value[5]}')
+            self.output_data_serials.setText(f'{value[3]}')
+            self.output_nation_serials.setText(f'{value[2]}')
+            self.output_style_serials.setText(f'{value[4]}')
+            self.name_film.setText(f'{value[0]}')
+            self.table_description_serials.appendPlainText(f'{value[7]}')
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
-        # №. serial, [rating], (release), style, seasons, description
-        # 1. Воскресший Эртугрул, [8.2], 2014-12-10, (боевик), 5, |Описание|
-
-        count = 1
-        self.table_serials.appendPlainText("№. serial, [rating], (release), style, seasons, |description|\n")
-        for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
-            self.table_serials.appendPlainText(f'{count}. '
-                                               f'{value[0]}, '
-                                               f'[{value[1]}], '
-                                               f'{value[2]}, '
-                                               f'({value[3]}), '
-                                               f'{value[4]}, '
-                                               f'\nОписание: |{value[5]}|\n')
-            count += 1
-
     def output_of_serials_by_rating(self):
         self.table_serials.clear()
-        self.table_serials.appendPlainText("№. serial, [rating], (release), style, seasons, |description|\n")
+        self.the_order_of_output_from_the_database_serials()
         if len(self.data_criteria_serials) > 0:
             count = 1
             for value in sql.execute(f"""
-                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY rating DESC"""):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                  SELECT * FROM data_serials WHERE style in {self.creating_request_serials()} ORDER BY rating DESC"""):
+                self.table_film_add_item_serials(value, count)
                 count += 1
         else:
             count = 1
             for value in sql.execute("SELECT * FROM data_serials ORDER BY rating DESC"):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                self.table_film_add_item_serials(value, count)
                 count += 1
 
     def output_of_serials_by_date(self):
         self.table_serials.clear()
-        self.table_serials.appendPlainText("№. serial, [rating], (release), style, seasons, |description|\n")
+        self.the_order_of_output_from_the_database_serials()
         if len(self.data_criteria_serials) > 0:
             count = 1
             for value in sql.execute(f"""
-                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY release DESC"""):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                  SELECT * FROM data_serials WHERE style in {self.creating_request_serials()} ORDER BY release DESC"""):
+                self.table_film_add_item_serials(value, count)
                 count += 1
         else:
             count = 1
             for value in sql.execute("SELECT * FROM data_serials ORDER BY release DESC"):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                self.table_film_add_item_serials(value, count)
                 count += 1
 
     def output_of_serials_by_name(self):
         self.table_serials.clear()
-        self.table_serials.appendPlainText("№. serial, [rating], (release), style, seasons, |description|\n")
+        self.the_order_of_output_from_the_database_serials()
         if len(self.data_criteria_serials) > 0:
             count = 1
             for value in sql.execute(f"""
-                    SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY serial ASC"""):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                    SELECT * FROM data_serials WHERE style in {self.creating_request_serials()} ORDER BY serial ASC"""):
+                self.table_film_add_item_serials(value, count)
                 count += 1
         else:
             count = 1
             for value in sql.execute("""
                     SELECT * FROM data_serials ORDER BY serial ASC"""):
-                self.table_serials.appendPlainText(f'{count}. '
-                                                   f'{value[0]}, '
-                                                   f'[{value[1]}], '
-                                                   f'{value[2]}, '
-                                                   f'({value[3]}), '
-                                                   f'{value[4]}, '
-                                                   f'\nОписание: |{value[5]}|\n')
+                self.table_film_add_item_serials(value, count)
                 count += 1
 
     # --------------------------------------------Сортировка Критерий---------------------------------------------------
-
-    # Входные данные: {'Фантастика', 'Ужасы'}
-    # Возращает: ('Фантастика', 'Ужасы')
-    # Нужно для команды в базу данных и для избежание не верных выводов данных
-    # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
-
-    def sort(self):
-        return f'''('{"', '".join(self.data_criteria_serials)}')'''
 
     def serials_sort(self, state):
         if state:
@@ -492,18 +469,15 @@ class Serials(QMainWindow):
         else:
             self.data_criteria_serials.remove(self.sender().text())
 
-    def search_criteria(self):
+        self.search_criteria_serials()
+
+    def search_criteria_serials(self):
         self.table_serials.clear()
-        self.table_serials.appendPlainText("№. serial, [rating], (release), style, seasons, |description|\n")
+        self.the_order_of_output_from_the_database_serials()
         count = 1
-        for value in sql.execute(f"SELECT * FROM data_serials WHERE style in {self.sort()} ORDER BY rating DESC"):
-            self.table_serials.appendPlainText(f'{count}. '
-                                               f'{value[0]}, '
-                                               f'[{value[1]}], '
-                                               f'({value[2]}), '
-                                               f'{value[3]}, '
-                                               f'{value[4]}, '
-                                               f'\nОписание: |{value[5]}|\n')
+        for value in sql.execute(f"""
+                SELECT * FROM data_serials WHERE style in {self.creating_request_serials()} ORDER BY rating DESC"""):
+            self.table_film_add_item_serials(value, count)
             count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
