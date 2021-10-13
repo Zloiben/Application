@@ -1,8 +1,8 @@
 import sys
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
-from translate import Translator
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import urllib.request
 import sqlite3
 
 db = sqlite3.connect("database.db")
@@ -66,15 +66,7 @@ class TranslatorApp(QMainWindow):
         #
 
     def translation(self):
-        FROM_LANGUAGE = self.comboBox.currentText().split('-')
-        TO_LANGUAGE = self.comboBox_2.currentText()
-        TEXT = self.textEdit.toPlainText()
-
-        translator = Translator(from_lang=FROM_LANGUAGE[0], to_lang=TO_LANGUAGE)
-
-        result = translator.translate(TEXT)
-
-        self.plainTextEdit_2.appendPlainText(result)
+        pass
 
     def clear_table(self):
         self.textEdit.clear()
@@ -224,8 +216,9 @@ class Films(QMainWindow):
 
             # Изображение
 
-            pixmap = QPixmap('images_data/images_films/' + f'{value[7]}')
-            self.image_films.setPixmap(pixmap)
+            # TODO: Сделать background в темных тонах /* Пример кино поиск *\
+
+            self.downloading_an_image_from_the_internet(value[7])
 
             # Остальная информация
 
@@ -236,6 +229,13 @@ class Films(QMainWindow):
             self.output_style.setText(f'{value[3]}')
             self.name_film.setText(f'{value[0]}')
             self.table_description_films.appendPlainText(f'{value[6]}')
+
+    def downloading_an_image_from_the_internet(self, url_name):
+
+        data = urllib.request.urlopen(url_name).read()
+        pixmap = QPixmap()
+        pixmap.loadFromData(data)
+        self.image_films.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
@@ -399,6 +399,7 @@ class Serials(QMainWindow):
         for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{image_name}'"):
 
             # Изображение
+            # TODO: Сделать background в темных тонах /* Пример кино поиск *\
 
             pixmap = QPixmap('images_data/images_serials/' + f'{value[8]}')
             self.image.setPixmap(pixmap)
