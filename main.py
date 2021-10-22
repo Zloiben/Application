@@ -3,11 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import urllib.request
-import sqlite3
-
-db = sqlite3.connect("database.db")
-sql = db.cursor()
-
+from config import *
 
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
@@ -15,72 +11,14 @@ sql = db.cursor()
 
 class Main(QMainWindow):
 
-    def __init__(self):
-        super().__init__()
-
-        # Классы приложений -> Нужны для перехода между окнами
-
-        global the_world_of_books_movies_and_series, translator
-
-        the_world_of_books_movies_and_series = TheWorldOfBooksMoviesAndSeries()
-        translator = TranslatorApp()
-
-        #
-
-        uic.loadUi("ui/main_main.ui", self)
-
-        # Кнопки
-
-        self.pushButton.clicked.connect(self.translator_window)
-        self.pushButton_2.clicked.connect(self.the_world_of_books_movies_and_series_window)
-
-    @staticmethod
-    def the_world_of_books_movies_and_series_window():
-        the_world_of_books_movies_and_series.show()
-        ex.close()
-
-    @staticmethod
-    def translator_window():
-        translator.show()
-        ex.close()
-
-
-class TranslatorApp(QMainWindow):
-
-    # TODO: Переделать переводчик
-
-    """ Переводчик Используется библиотека """
+    """ Главное окно"""
 
     def __init__(self):
         super().__init__()
 
-        #
-
-        uic.loadUi('ui/translation.ui', self)
+        self.setWindowIcon(QIcon('icon.png'))
 
         #
-
-        self.btn_translation.clicked.connect(self.translation)
-        self.btn_clear.clicked.connect(self.clear_table)
-
-        #
-
-    def translation(self):
-        pass
-
-    def clear_table(self):
-        self.textEdit.clear()
-        self.plainTextEdit_2.clear()
-
-
-class TheWorldOfBooksMoviesAndSeries(QMainWindow):
-
-    """ Главное окно 'Мир книг, фильмов, сериалов' """
-
-    def __init__(self):
-        super().__init__()
-
-        # Классы критерий
 
         global serial, films, books_and_comics
 
@@ -98,29 +36,20 @@ class TheWorldOfBooksMoviesAndSeries(QMainWindow):
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
 
-        # Кнопка назад
-
-        self.btn_exit_main.clicked.connect(self.exit)
-
     @staticmethod
     def serial_window():
-        the_world_of_books_movies_and_series.close()
+        ex.close()
         serial.show()
 
     @staticmethod
     def books_and_comics_window():
         books_and_comics.show()
-        the_world_of_books_movies_and_series.close()
+        ex.close()
 
     @staticmethod
     def film_window():
         films.show()
-        the_world_of_books_movies_and_series.close()
-
-    @staticmethod
-    def exit():
-        the_world_of_books_movies_and_series.close()
-        ex.show()
+        ex.close()
 
 
 class Films(QMainWindow):
@@ -129,10 +58,9 @@ class Films(QMainWindow):
         super().__init__()
         uic.loadUi('ui/film.ui', self)
 
-    # ----------------------------------------------<Идеи для добавления>-----------------------------------------------
+        self.setWindowIcon(QIcon('icon.png'))
 
-        # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
-        # Если будет сделано то нужно не забыть выводить главных герояв в подробной информации
+    # ----------------------------------------------<Идеи для добавления>----------------------------------------------и
 
         # TODO: Добавить в подробную информацию -> чей фильм
 
@@ -147,7 +75,6 @@ class Films(QMainWindow):
         self.data_criteria = set()
 
         # Все критерии -> Вывод фильмов по критериям
-        # TODO: Требуется добавить критериев /* Вся информация берется с кинопоиска *\
 
         self.checkBox.clicked.connect(self.films_sort)
         self.checkBox_2.clicked.connect(self.films_sort)
@@ -162,7 +89,7 @@ class Films(QMainWindow):
         # Кнопки
 
         self.btn_exit_films.clicked.connect(self.exit)
-        self.btn_search_films.clicked.connect(self.search_films)
+        self.btn_search_films.clicked.connect(self.checking_the_search)
 
         # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
 
@@ -175,14 +102,23 @@ class Films(QMainWindow):
 
     def creating_request_films(self):
 
-        # Входные данные множество жанров -> {'Фантастика', 'Ужасы'}
-        # Возращает для отправки запроса в базу данных -> ('Фантастика', 'Ужасы')
-        # Пример запроса:
-        # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
+        """
+        Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
+        Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
+
+        Пример выполняемого запроса:
+        SELECT * FROM data WHERE style in ("Фантастика", "Ужасы")
+        SELECT * FROM <БД> WHERE <Выбранная ячейка> in <Ищем>
+        """
 
         return f'''('{"', '".join(self.data_criteria)}')'''
 
     def table_film_add_item_films(self, value, count):
+
+        """
+        Вывод фильмов и краткой инфмормации в таблицу со всеми фильмами
+        """
+
         self.table_films.addItem(f'{count}. '
                                  f'{value[0]}, '
                                  f'[{value[1]}], '
@@ -191,9 +127,60 @@ class Films(QMainWindow):
                                  f'{value[4]}, '
                                  f'{value[5]}')
 
+    def checking_the_search(self):
+
+        """
+
+        Функция дял проверки запроса на поиск ->
+        Если фильм не найден то фукция убирает все и пишет "Фильм не найден".
+        Если найден фильм то выводтся подробная информация.
+
+        """
+        # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
+        # Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
+
+        film = self.input_search_films.text()
+
+        verification_film = sql.execute(f'SELECT * FROM data WHERE film = "{film}"')
+        if verification_film.fetchone() is None:
+            self.table_description_films.clear()
+            self.image_films.setText("Фильм не найден....")
+            self.output_rating_films.setText('')
+            self.output_age_films.setText('')
+            self.output_date_films.setText('')
+            self.output_nation_films.setText('')
+            self.output_style_films.setText('')
+            self.name_film.setText('')
+            self.table_description_films.appendPlainText('')
+        else:
+            self.information_output_films(film)
+
+    def search_for_data_in_the_database(self, database, sorting, type_sorting):
+
+        """Функция для поиска данных в базе данных и вывода в таблицу"""
+
+        print(database, sorting, type_sorting)
+
+        self.table_films.clear()
+        self.the_order_of_output_from_the_database_films()
+
+        count = 1
+        if len(self.data_criteria) > 0:
+            for value in sql.execute(f"""
+                     SELECT * FROM {database}
+                     WHERE style in {self.creating_request_films()}
+                     ORDER BY {sorting} {type_sorting}"""):
+                self.table_film_add_item_films(value, count)
+                count += 1
+        else:
+            for value in sql.execute(f"SELECT * FROM {database} ORDER BY {sorting} {type_sorting}"):
+                self.table_film_add_item_films(value, count)
+                count += 1
+
     # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
 
     def basic_output_films(self):
+
         count = 1
         self.the_order_of_output_from_the_database_films()
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
@@ -203,6 +190,9 @@ class Films(QMainWindow):
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
 
     def movie_selection_films(self):
+
+        """Получаем выбранный фильм и редактируем под запрос"""
+
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
         # -> ['Шан-Чи и легенда десяти колец', '[7.3]', 'США', '(Фантастика)', 16+]
         if selected_movie[0] != 'film':
@@ -210,27 +200,31 @@ class Films(QMainWindow):
 
     def information_output_films(self, image_name):
 
+        """
+
+        Функция для подробной информации по выбранному фильму
+
+        """
+
         self.table_description_films.clear()
 
         for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
 
-            # Изображение
-
-            # TODO: Сделать background в темных тонах /* Пример кино поиск *\
-
-            self.downloading_an_image_from_the_internet(value[7])
+            self.downloading_an_image_from_the_internet_films(value[7])
 
             # Остальная информация
 
-            self.output_rating.setText(f'{value[1]}')
-            self.output_age.setText(f'{value[5]}')
-            self.output_date.setText(f'{value[4]}')
-            self.output_nation.setText(f'{value[2]}')
-            self.output_style.setText(f'{value[3]}')
+            self.output_rating_films.setText(f'{value[1]}')
+            self.output_age_films.setText(f'{value[5]}')
+            self.output_date_films.setText(f'{value[4]}')
+            self.output_nation_films.setText(f'{value[2]}')
+            self.output_style_films.setText(f'{value[3]}')
             self.name_film.setText(f'{value[0]}')
             self.table_description_films.appendPlainText(f'{value[6]}')
 
-    def downloading_an_image_from_the_internet(self, url_name):
+    def downloading_an_image_from_the_internet_films(self, url_name):
+
+        """Фунцкия для скачивая изображения с интернета"""
 
         data = urllib.request.urlopen(url_name).read()
         pixmap = QPixmap()
@@ -240,55 +234,28 @@ class Films(QMainWindow):
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
     def output_of_films_by_rating(self):
-        self.table_films.clear()
-        self.the_order_of_output_from_the_database_films()
-        count = 1
-        if len(self.data_criteria) > 0:
-            for value in sql.execute(f"""
-                    SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY rating DESC"""):
-                self.table_film_add_item_films(value, count)
-                count += 1
-        else:
-            for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-                self.table_film_add_item_films(value, count)
-                count += 1
+
+        """Вывод фильмов по рейтингу"""
+
+        self.search_for_data_in_the_database("data", "rating", "DESC")
 
     def output_of_films_by_date(self):
-        self.table_films.clear()
-        self.the_order_of_output_from_the_database_films()
-        count = 1
-        if len(self.data_criteria) > 0:
-            for value in sql.execute(f"""
-                        SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY release DESC"""):
-                self.table_film_add_item_films(value, count)
-                count += 1
-        else:
-            for value in sql.execute("SELECT * FROM data ORDER BY release DESC"):
-                self.table_film_add_item_films(value, count)
-                count += 1
+
+        """Вывод фильмов по дате релиза"""
+
+        self.search_for_data_in_the_database("data", "release", "DESC")
 
     def output_of_films_by_name(self):
-        self.table_films.clear()
-        self.the_order_of_output_from_the_database_films()
-        count = 1
-        if len(self.data_criteria) > 0:
-            for value in sql.execute(f"""
-                                SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY film ASC"""):
-                self.table_film_add_item_films(value, count)
-                count += 1
-        else:
-            for value in sql.execute("SELECT * FROM data ORDER BY film ASC"):
-                self.table_film_add_item_films(value, count)
-                count += 1
+
+        """Вывод фильмов по названию"""
+
+        self.search_for_data_in_the_database("data", "film", "ASC")
 
     # --------------------------------------------Сортировка по Критериям-----------------------------------------------
 
-    def search_films(self):
-        self.information_output_films(self.input_search.text())
-
     def films_sort(self, state):
 
-        # Добавление и удалений из множества категорий так же сразу осуществляется сортировка
+        """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
 
         if state:
             self.data_criteria.add(self.sender().text())
@@ -299,22 +266,16 @@ class Films(QMainWindow):
 
     def search_criteria_films(self):
 
-        # Поиск по критериям
+        """ Сортировка по критериям """
 
-        self.table_films.clear()
-        self.the_order_of_output_from_the_database_films()
-        count = 1
-        for value in sql.execute(f"""
-                            SELECT * FROM data WHERE style in {self.creating_request_films()} ORDER BY rating DESC"""):
-            self.table_film_add_item_films(value, count)
-            count += 1
+        self.search_for_data_in_the_database("data", "rating", "DESC")
 
     #  -----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
     def exit():
         films.close()
-        the_world_of_books_movies_and_series.show()
+        ex.show()
 
 
 class Serials(QMainWindow):
@@ -324,6 +285,8 @@ class Serials(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui/serials.ui', self)
+
+        self.setWindowIcon(QIcon('icon.png'))
 
         self.basic_output_serials()
 
@@ -359,14 +322,22 @@ class Serials(QMainWindow):
 
     def creating_request_serials(self):
 
-        # Входные данные множество жанров -> {'Фантастика', 'Ужасы'}
-        # Возращает для отправки запроса в базу данных -> ('Фантастика', 'Ужасы')
-        # Пример запроса:
-        # SELECT * FROM data_serials WHERE style in ('Фантастика', 'Ужасы')
+        """
+        Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
+        Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
+
+        Пример выполняемого запроса:
+            SELECT * FROM data WHERE style in ("Фантастика", "Ужасы")
+            SELECT * FROM <БД> WHERE <Выбранная ячейка> in <Ищем>
+        """
 
         return f'''('{"', '".join(self.data_criteria_serials)}')'''
 
     def table_film_add_item_serials(self, value, count):
+
+        # TODO: Происходит баг что елси ничего не выбрано то ничего не показывает нужно чтобы было ->
+        # 1. Если выбрана одна или несколько категорий выводило их
+        # 2. Если после выбара пользователь убрал все тдолжы показаны все
         self.table_serials.addItem(f'{count}. '
                                    f'{value[0]}, '
                                    f'[{value[1]}], '
@@ -397,9 +368,6 @@ class Serials(QMainWindow):
 
         self.table_description_serials.clear()
         for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{image_name}'"):
-
-            # Изображение
-            # TODO: Сделать background в темных тонах /* Пример кино поиск *\
 
             pixmap = QPixmap('images_data/images_serials/' + f'{value[8]}')
             self.image.setPixmap(pixmap)
@@ -486,7 +454,7 @@ class Serials(QMainWindow):
     @staticmethod
     def exit():
         serial.close()
-        the_world_of_books_movies_and_series.show()
+        ex.show()
 
 
 class BooksComics(QMainWindow):
@@ -494,6 +462,8 @@ class BooksComics(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('ui/books_comics.ui', self)
+
+        self.setWindowIcon(QIcon('icon.png'))
 
         self.data_criteria_books = set()
 
@@ -610,7 +580,7 @@ class BooksComics(QMainWindow):
     @staticmethod
     def exit():
         books_and_comics.close()
-        the_world_of_books_movies_and_series.show()
+        ex.show()
 
 
 if __name__ == '__main__':
