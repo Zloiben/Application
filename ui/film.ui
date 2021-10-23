@@ -157,12 +157,28 @@ border-color: rgb(119, 143, 81);
 border-radius: 15px; border: 3px solid white;
 border-color: rgb(119, 143, 81);</string>
     </property>
-    <widget class="QWidget" name="categoriesPage1" native="true">
+    <widget class="QWidget" name="categoriesPage1">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>469</width>
+       <height>125</height>
+      </rect>
+     </property>
      <attribute name="label">
       <string/>
      </attribute>
     </widget>
-    <widget class="QWidget" name="categoriesPage2" native="true">
+    <widget class="QWidget" name="categoriesPage2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>94</width>
+       <height>24</height>
+      </rect>
+     </property>
      <attribute name="label">
       <string/>
      </attribute>
@@ -482,6 +498,19 @@ border-color: rgb(119, 143, 81);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">background: black;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_clear_film_images">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>0</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Очистить Изображения</string>
     </property>
    </widget>
   </widget>

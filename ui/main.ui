@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>202</height>
+    <width>414</width>
+    <height>201</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,17 +65,30 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="btn_exit_main">
+   <widget class="QPushButton" name="btn_exit">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>10</x>
       <y>130</y>
-      <width>75</width>
+      <width>191</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Назад</string>
+     <string>Выход</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_clear_all_images">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>130</y>
+      <width>201</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Очистить изображения</string>
     </property>
    </widget>
   </widget>
@@ -84,7 +97,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>409</width>
+     <width>414</width>
      <height>21</height>
     </rect>
    </property>

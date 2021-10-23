@@ -4,6 +4,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import urllib.request
 from config import *
+from os import remove, listdir
 
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
@@ -36,6 +37,25 @@ class Main(QMainWindow):
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
 
+        # Дополнительные кнопки
+
+        self.btn_exit.clicked.connect(self._exit)
+        self.btn_clear_all_images.clicked.connect(self.clear_all_images)
+
+    @staticmethod
+    def clear_all_images():
+
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png'), directory_images))
+
+        if len(data_on_downloaded_images) > 0:
+            for i in data_on_downloaded_images:
+                remove(f"data_images/{i}")
+
+    @staticmethod
+    def _exit():
+        exit(0)
+
     @staticmethod
     def serial_window():
         ex.close()
@@ -59,11 +79,6 @@ class Films(QMainWindow):
         uic.loadUi('ui/film.ui', self)
 
         self.setWindowIcon(QIcon('icon.png'))
-
-    # ----------------------------------------------<Идеи для добавления>----------------------------------------------и
-
-        # TODO: Добавить в подробную информацию -> чей фильм
-
     # --------------------------------------------<Фукции при запуски>--------------------------------------------------
 
         self.basic_output_films()
@@ -90,15 +105,29 @@ class Films(QMainWindow):
 
         self.btn_exit_films.clicked.connect(self.exit)
         self.btn_search_films.clicked.connect(self.checking_the_search)
+        self.btn_clear_film_images.clicked.connect(self.clear_film_images)
 
         # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
 
         self.table_films.clicked.connect(self.movie_selection_films)
 
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
-
     def the_order_of_output_from_the_database_films(self):
+
+        """Заголовок в котором показан порядок вывода информации"""
+
         self.table_films.addItem('№. film, [rating], nation, (release), style, age')
+
+    def films_sort(self, state):
+
+        """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
+
+        if state:
+            self.data_criteria.add(self.sender().text())
+        else:
+            self.data_criteria.remove(self.sender().text())
+
+        self.search_criteria_films()
 
     def creating_request_films(self):
 
@@ -121,8 +150,8 @@ class Films(QMainWindow):
 
         self.table_films.addItem(f'{count}. '
                                  f'{value[0]}, '
-                                 f'[{value[1]}], '
-                                 f'{value[2]}, '
+                                 f'{value[1]}, '
+                                 f'[{value[2]}], '
                                  f'({value[3]}), '
                                  f'{value[4]}, '
                                  f'{value[5]}')
@@ -136,15 +165,18 @@ class Films(QMainWindow):
         Если найден фильм то выводтся подробная информация.
 
         """
+
+        # TODO: Добавить в подробную информацию -> чей фильм
         # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
         # Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
+        # !!!ВАЖНО!!! Должно происходить автоматически
 
         film = self.input_search_films.text()
 
         verification_film = sql.execute(f'SELECT * FROM data WHERE film = "{film}"')
         if verification_film.fetchone() is None:
-            self.table_description_films.clear()
             self.image_films.setText("Фильм не найден....")
+            self.table_description_films.clear()
             self.output_rating_films.setText('')
             self.output_age_films.setText('')
             self.output_date_films.setText('')
@@ -152,6 +184,7 @@ class Films(QMainWindow):
             self.output_style_films.setText('')
             self.name_film.setText('')
             self.table_description_films.appendPlainText('')
+
         else:
             self.information_output_films(film)
 
@@ -159,11 +192,8 @@ class Films(QMainWindow):
 
         """Функция для поиска данных в базе данных и вывода в таблицу"""
 
-        print(database, sorting, type_sorting)
-
         self.table_films.clear()
         self.the_order_of_output_from_the_database_films()
-
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
@@ -173,7 +203,9 @@ class Films(QMainWindow):
                 self.table_film_add_item_films(value, count)
                 count += 1
         else:
-            for value in sql.execute(f"SELECT * FROM {database} ORDER BY {sorting} {type_sorting}"):
+            for value in sql.execute(f"""
+                     SELECT * FROM {database} 
+                     ORDER BY {sorting} {type_sorting}"""):
                 self.table_film_add_item_films(value, count)
                 count += 1
 
@@ -182,7 +214,7 @@ class Films(QMainWindow):
     def basic_output_films(self):
 
         count = 1
-        self.the_order_of_output_from_the_database_films()
+        self.table_films.addItem('№. film, [rating], nation, (release), style, age')
         for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
             self.table_film_add_item_films(value, count)
             count += 1
@@ -194,23 +226,30 @@ class Films(QMainWindow):
         """Получаем выбранный фильм и редактируем под запрос"""
 
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
-        # -> ['Шан-Чи и легенда десяти колец', '[7.3]', 'США', '(Фантастика)', 16+]
-        if selected_movie[0] != 'film':
-            self.information_output_films(selected_movie[0])
+        if selected_movie[1] != 'film':
+            self.information_output_films(selected_movie[1])
 
     def information_output_films(self, image_name):
 
-        """
+        """Функция для подробной информации по выбранному фильму"""
 
-        Функция для подробной информации по выбранному фильму
-
-        """
+        # Таблица data - Фильмы
+        # id TEXT 1000001 (id нужно для простого сохранение фотографий)
+        # film TEXT Шан-Чи и легенда десяти колец
+        # rating REAL 9.1
+        # nation TEXT США
+        # release DATE 2021-05-09
+        # style TEXT Фантастика
+        # age TEXT 16+
+        # (TODO: age Изменить на число и выводить потом со знаком + для того что бы было использованно меньше памяти)
+        # description TEXT Описание
+        # images TEXT (images хранит ссылку для скачивание изображение с интерета используется библиотка urllib.request)
 
         self.table_description_films.clear()
 
         for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
 
-            self.downloading_an_image_from_the_internet_films(value[7])
+            self.downloading_an_image_from_the_internet_films(value[8], value[0])
 
             # Остальная информация
 
@@ -222,14 +261,51 @@ class Films(QMainWindow):
             self.name_film.setText(f'{value[0]}')
             self.table_description_films.appendPlainText(f'{value[6]}')
 
-    def downloading_an_image_from_the_internet_films(self, url_name):
+    @staticmethod
+    def clear_film_images():
 
-        """Фунцкия для скачивая изображения с интернета"""
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images))
 
-        data = urllib.request.urlopen(url_name).read()
-        pixmap = QPixmap()
-        pixmap.loadFromData(data)
-        self.image_films.setPixmap(pixmap)
+        for i in data_on_downloaded_images:
+            if "1" == i[:1]:
+                remove(f"data_images/{i}")
+
+    def downloading_an_image_from_the_internet_films(self, url_name, id_film):
+
+        """
+        Фунцкия для скачивания изображения с интернета и так же она сохраняет изображение с интернета
+        на компьютере пользователя более подробное описание ниже ->
+
+        После того как пользователь выбрал фильм скачивается изображение с интернета
+        Так происходит каждый раз, загрузка немного тормозит программу
+        Поэтому можно реализовать функцию которая после выбранного фильма скачивает изображение с интернета и
+        сохранят на пк -> Тем самым после того как пользователь выберет этот фильм снова , он загрузится моментально
+
+        В базе данных добавить столбец id -> 1000001, 1000002, 1000003
+        Потом скачивается в папку под этим id и можно будет открывать изображение
+        Будет несколько типов:
+        1. 1000001 - Фильмы (Не будет изменений)
+        2. 2000001 - Сериалы (Возможны изменения)
+        3. 3000001 - Книги (Возможно изменение)
+        """
+
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images))
+
+        if id_film + ".png" in data_on_downloaded_images:
+            pixmap = QPixmap(f"data_images/{id_film}.png")
+            self.image_films.setPixmap(pixmap)
+        else:
+            data = urllib.request.urlopen(url_name).read()
+
+            f = open(f"data_images/{id_film}.png", "wb")
+            f.write(data)
+            f.close()
+
+            pixmap = QPixmap()
+            pixmap.loadFromData(data)
+            self.image_films.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
@@ -251,22 +327,9 @@ class Films(QMainWindow):
 
         self.search_for_data_in_the_database("data", "film", "ASC")
 
-    # --------------------------------------------Сортировка по Критериям-----------------------------------------------
-
-    def films_sort(self, state):
-
-        """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
-
-        if state:
-            self.data_criteria.add(self.sender().text())
-        else:
-            self.data_criteria.remove(self.sender().text())
-
-        self.search_criteria_films()
-
     def search_criteria_films(self):
 
-        """ Сортировка по критериям """
+        """Сортировка по критериям"""
 
         self.search_for_data_in_the_database("data", "rating", "DESC")
 
