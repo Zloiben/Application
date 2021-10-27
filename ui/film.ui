@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1885</width>
-    <height>1125</height>
+    <width>932</width>
+    <height>998</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,19 +37,6 @@
     </property>
     <property name="text">
      <string>Фильмы.</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_search_films">
-    <property name="geometry">
-     <rect>
-      <x>1050</x>
-      <y>10</y>
-      <width>91</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Поиск</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_exit_films">
@@ -115,10 +102,10 @@ border-color: rgb(119, 143, 81);
    <widget class="QListWidget" name="table_films">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>700</y>
-      <width>491</width>
-      <height>331</height>
+      <x>430</x>
+      <y>610</y>
+      <width>501</width>
+      <height>421</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
@@ -129,15 +116,18 @@ border-color: rgb(119, 143, 81);
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>740</y>
-      <width>441</width>
-      <height>291</height>
+      <y>720</y>
+      <width>411</width>
+      <height>311</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <pointsize>8</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -146,9 +136,9 @@ border-color: rgb(119, 143, 81);
    <widget class="QToolBox" name="categories">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>510</y>
-      <width>481</width>
+      <x>430</x>
+      <y>420</y>
+      <width>501</width>
       <height>191</height>
      </rect>
     </property>
@@ -162,7 +152,7 @@ border-color: rgb(119, 143, 81);</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>469</width>
+       <width>489</width>
        <height>125</height>
       </rect>
      </property>
@@ -175,8 +165,8 @@ border-color: rgb(119, 143, 81);</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>94</width>
-       <height>24</height>
+       <width>489</width>
+       <height>125</height>
       </rect>
      </property>
      <attribute name="label">
@@ -280,7 +270,7 @@ border-color: rgb(119, 143, 81);</string>
      <rect>
       <x>30</x>
       <y>80</y>
-      <width>431</width>
+      <width>401</width>
       <height>641</height>
      </rect>
     </property>
@@ -487,19 +477,6 @@ border-color: rgb(119, 143, 81);</string>
      </property>
     </widget>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>80</y>
-      <width>581</width>
-      <height>331</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: black;</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btn_clear_film_images">
     <property name="geometry">
      <rect>
@@ -513,19 +490,160 @@ border-color: rgb(119, 143, 81);</string>
      <string>Очистить Изображения</string>
     </property>
    </widget>
+   <widget class="QVideoWidget" name="widget_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>80</y>
+      <width>501</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius: 10px; 
+border: 3px solid white;
+border-color: rgb(119, 143, 81);</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>380</y>
+      <width>501</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Загрузить Трейлер</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="horizontalSlider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="sliderPosition">
+        <number>0</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Громкость</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="horizontalSlider_2">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="ready_for_viewing">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>55</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1885</width>
+     <width>932</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVideoWidget</class>
+   <extends>QWidget</extends>
+   <header>PyQt5.QtMultimediaWidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

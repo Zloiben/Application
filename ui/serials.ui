@@ -97,7 +97,7 @@
      <string>Назад</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="input_search_serials">
     <property name="geometry">
      <rect>
       <x>590</x>
@@ -347,7 +347,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="image">
+   <widget class="QLabel" name="image_serial">
     <property name="geometry">
      <rect>
       <x>0</x>
