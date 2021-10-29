@@ -4,13 +4,25 @@ from os import remove, listdir
 from pytube import YouTube
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QStyle, QMainWindow
+from PyQt5.QtWidgets import QApplication, QStyle, QMainWindow, QMessageBox
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
 
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
+# ----------------------------------------------------------------------------------------------------------------------
+# TODO: Добавить страничку пользователя
+#  1. В ней должно быть ФИО
+#  2. изображени пользователя
+#  3. Избранные фильмы
+
+# TODO: Сделать окно настройки приложения
+#  1. Нужно ли подтвержать скачать трейлер или удалить (Скаченные трейлеры, Скаченные изображения)
+#  2. Пользователь сам решал что ему выводить первым при базовым выводе
+
+# TODO: Добавить с боку аватарку пользователя и имя и в настройках профиля изменение этого
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 class Main(QMainWindow):
@@ -39,6 +51,7 @@ class Main(QMainWindow):
         self.btn_films.clicked.connect(self.film_window)
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
+
 
         # Дополнительные кнопки
 
@@ -86,39 +99,37 @@ class Films(QMainWindow):
         self.name_film_global = ''
 
         self.setWindowIcon(QIcon('icon.png'))
-    # --------------------------------------------<Фукции при запуски>--------------------------------------------------
 
-        self.basic_output_films()
+        # Добавляются и удаляются критерии |films_sort| -> Нужно для запроса в базу данных
+        self.data_criteria = set()
+
+        self.basic_by_output()
 
     # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
 
-        # Добавляются и удаляются критерии |films_sort| -> Нужно для запроса в базу данных
-
-        self.data_criteria_films = set()
-
         # Все критерии -> Вывод фильмов по критериям
 
-        self.checkBox.clicked.connect(self.films_sort)
-        self.checkBox_2.clicked.connect(self.films_sort)
-        self.checkBox_3.clicked.connect(self.films_sort)
+        self.checkBox.clicked.connect(self.sort)
+        self.checkBox_2.clicked.connect(self.sort)
+        self.checkBox_3.clicked.connect(self.sort)
 
         # Основные критерии -> {Рейтинг, По дате, По названию}
 
-        self.btn_rating_DESC_films.clicked.connect(self.output_of_films_by_rating)
-        self.btn_date_DESC_films.clicked.connect(self.output_of_films_by_date)
-        self.btn_name_DESC_films.clicked.connect(self.output_of_films_by_name)
+        self.btn_rating_DESC_films.clicked.connect(self.output_by_rating)
+        self.btn_date_DESC_films.clicked.connect(self.output_by_date)
+        self.btn_name_DESC_films.clicked.connect(self.output_by_name)
 
         # таблица фильмов
 
-        self.table_films.clicked.connect(self.movie_selection_films)
+        self.table_films.clicked.connect(self.movie_selection)
 
         # Кнопки
 
-        self.btn_exit_films.clicked.connect(self.exit)
+        self.btn_exit_films.clicked.connect(self._exit)
         self.btn_clear_film_images.clicked.connect(self.clear_films_images)
 
-        # Нажатие на Enter
-        self.input_search_films.returnPressed.connect(self.checking_the_search_film)
+        # Нажатие Поиска на Enter
+        self.input_search_films.returnPressed.connect(self.checking_search)
 
         #
 
@@ -126,13 +137,13 @@ class Films(QMainWindow):
 
         self.mediaPlayer.positionChanged.connect(self.position_changed)
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
-        self.mediaPlayer.stateChanged.connect(self.mediastate_changed)
+        self.mediaPlayer.stateChanged.connect(self.media_state_changed)
         self.horizontalSlider.sliderMoved.connect(self.set_position)
         self.horizontalSlider_2.sliderMoved.connect(self.set_volume)
 
-        self.mediaPlayer.setVideoOutput(self.widget_2)
+        self.mediaPlayer.setVideoOutput(self.widget_film_trailer)
         self.pushButton.clicked.connect(self.download_trailer)
-        self.pushButton_2.clicked.connect(self.play_video)
+        self.pushButton_2.clicked.connect(self.play)
         self.pushButton_2.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.horizontalSlider.setSliderPosition(0)
 
@@ -145,14 +156,16 @@ class Films(QMainWindow):
         и нужно будет подождать и если уже потом пользователь нажимает еще раз то проиходит загрузка и сохрание на пк
         и если в следущий раз пользователь нажмет на кпоку видео загрузиться с пк сразу и не будет предупреждений """
 
-        # TODO: Нужно доработать
+        # TODO: Попробовать реализовать полноэкранный экран
+        # TODO: Нужно реализовать функцию удаления видео
         # Видео будет на компьютере Причины:
         # ДОлгая загрузка трейлера
         # Если получится то оптимезировать процес и добавить загрузку с интернета
 
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
-            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos))
+            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+        )
 
         filename = ''
         url_film_trailer = ''
@@ -162,29 +175,45 @@ class Films(QMainWindow):
             filename = value[1]
             url_film_trailer = value[0]
 
-        if filename + '.mp4' in data_on_downloaded_videos:
-            """Функция выводит трейлер с папки скаченных трейлеров на экран пользователю"""
+        if self.name_film_global == '':
+            QMessageBox.warning(self, "Информация", "Вам нужно выбрать фильм")
+
+        elif filename + '.mp4' in data_on_downloaded_videos:
+
+            """выводит трейлер с папки скаченных трейлеров на экран пользователю"""
+
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
             self.pushButton_2.setEnabled(True)
             self.ready_for_viewing.setText("Трейлер готов к запуску")
+
         else:
-            """Функция выводит трейлер с интернета на экран пользователю"""
-            yt = YouTube(url_film_trailer)
-            yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
-            yt.download("data_videos", filename + '.mp4')
 
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
-            self.pushButton_2.setEnabled(True)
-            self.ready_for_viewing.setText("Трейлер готов к запуску")
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Трейлер не скачен, нужно будет немного подождать',
+                                         QMessageBox.Yes, QMessageBox.No)
 
-    def play_video(self):
+            if valid == QMessageBox.Yes:
+                """выводит трейлер с интернета на экран пользователю"""
+
+                yt = YouTube(url_film_trailer)
+                yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
+                yt.download("data_videos", filename + '.mp4')
+
+                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+                self.pushButton_2.setEnabled(True)
+                self.ready_for_viewing.setText("Трейлер готов к запуску")
+            else:
+                self.ready_for_viewing.setText("Трейлер не скачен")
+
+    def play(self):
 
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
         else:
             self.mediaPlayer.play()
 
-    def mediastate_changed(self, state):
+    def media_state_changed(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.pushButton_2.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
         else:
@@ -199,31 +228,31 @@ class Films(QMainWindow):
     def set_position(self, position):
         self.mediaPlayer.setPosition(position)
 
-    def set_volume(self, position):
+    def set_volume(self):
         value = self.horizontalSlider_2.value()
         self.mediaPlayer.setVolume(value)
         self.statusbar.showMessage("Громкость " + str(value) + " %")
 
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
 
-    def the_order_of_output_from_the_database_films(self):
+    def order_output_from_the_database(self):
 
         """Заголовок в котором показан порядок вывода информации"""
 
         self.table_films.addItem('№. film, [rating], nation, (release), style, age')
 
-    def films_sort(self, state):
+    def sort(self, state):
 
         """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
 
         if state:
-            self.data_criteria_films.add(self.sender().text())
+            self.data_criteria.add(self.sender().text())
         else:
-            self.data_criteria_films.remove(self.sender().text())
+            self.data_criteria.remove(self.sender().text())
 
-        self.search_criteria_films()
+        self.search_by_criteria()
 
-    def creating_request_films(self):
+    def creating_request(self):
 
         """
         Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
@@ -234,21 +263,21 @@ class Films(QMainWindow):
         SELECT * FROM <БД> WHERE <Выбранная ячейка> in <Ищем>
         """
 
-        return f'''('{"', '".join(self.data_criteria_films)}')'''
+        return f'''('{"', '".join(self.data_criteria)}')'''
 
-    def table_film_add_item_films(self, value, count):
+    def add_item(self, value, count):
 
         """Вывод фильмов и краткой инфмормации в таблицу"""
 
         self.table_films.addItem(f'{count}. '
-                                 f'{value[0]}, '
                                  f'{value[1]}, '
-                                 f'[{value[2]}], '
-                                 f'({value[3]}), '
-                                 f'{value[4]}, '
-                                 f'{value[5]}')
+                                 f'{value[2]}, '
+                                 f'[{value[3]}], '
+                                 f'({value[4]}), '
+                                 f'{value[5]}, '
+                                 f'{value[6]}')
 
-    def checking_the_search_film(self):
+    def checking_search(self):
 
         """
 
@@ -260,8 +289,8 @@ class Films(QMainWindow):
 
         # TODO: Добавить в подробную информацию -> чей фильм
         # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
-        # Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
-        # !!!ВАЖНО!!! Должно происходить автоматически
+        #  Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
+        #  !!!ВАЖНО!!! Должно происходить автоматически
 
         film = self.input_search_films.text().strip().capitalize()
 
@@ -276,86 +305,65 @@ class Films(QMainWindow):
             self.output_style_films.setText('')
             self.name_film.setText('')
             self.table_description_films.appendPlainText('')
+            self.name_film_global = ''
 
         else:
-            self.information_output_films(film)
+            self.information_output(film)
 
-    def search_for_data_in_the_database_film(self, sorting, type_sorting):
+    def search_in_database(self, sorting, type_sorting):
 
         """Функция для поиска данных в базе данных и вывода в таблицу"""
 
         self.table_films.clear()
-        self.the_order_of_output_from_the_database_films()
+        self.order_output_from_the_database()
         count = 1
-        if len(self.data_criteria_films) > 0:
+        if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                      SELECT * FROM data
-                     WHERE style in {self.creating_request_films()}
+                     WHERE style in {self.creating_request()}
                      ORDER BY {sorting} {type_sorting}"""):
-                self.table_film_add_item_films(value, count)
+                self.add_item(value, count)
                 count += 1
         else:
             for value in sql.execute(f"""
                      SELECT * FROM data
                      ORDER BY {sorting} {type_sorting}"""):
-                self.table_film_add_item_films(value, count)
+                self.add_item(value, count)
                 count += 1
-
-    # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
-
-    def basic_output_films(self):
-
-        count = 1
-        self.table_films.addItem('№. film, [rating], nation, (release), style, age')
-        for value in sql.execute("SELECT * FROM data ORDER BY rating DESC"):
-            self.table_film_add_item_films(value, count)
-            count += 1
 
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
 
-    def movie_selection_films(self):
+    def movie_selection(self):
 
         """Получаем выбранный фильм и редактируем под запрос"""
 
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
-        if selected_movie[1] != 'film':
-            self.information_output_films(selected_movie[1])
+        if selected_movie[0] != 'film':
+            self.information_output(selected_movie[0])
 
-    def information_output_films(self, image_name):
+    def information_output(self, film):
 
         """Функция для подробной информации по выбранному фильму"""
 
-        # Таблица data - Фильмы
-        # id TEXT 1000001 (id нужно для простого сохранение фотографий)
-        # film TEXT Шан-Чи и легенда десяти колец
-        # rating REAL 9.1
-        # nation TEXT США
-        # release DATE 2021-05-09
-        # style TEXT Фантастика
-        # age TEXT 16+
-        # (TODO: age Изменить на число и выводить потом со знаком + для того что бы было использованно меньше памяти)
-        # description TEXT Описание
-        # images TEXT (images хранит ссылку для скачивание изображение с интерета используется библиотка urllib.request)
-
         self.table_description_films.clear()
         self.ready_for_viewing.setText(" ")
-        self.name_film_global = image_name
+        self.name_film_global = film
 
-        for value in sql.execute(f"SELECT * FROM data WHERE film = '{image_name}'"):
+        for value in sql.execute(f"SELECT * FROM data WHERE film = '{film}'"):
 
             # Изображение
 
-            self.downloading_an_image_from_the_internet_films(value[8], value[0])
+            self.downloading_an_image_from_the_internet(value[8], value[0])
 
             # Остальная информация
 
-            self.output_rating_films.setText(f'{value[1]}')
-            self.output_age_films.setText(f'{value[5]}')
+            self.output_rating_films.setText(f'{value[2]}')
+            self.output_age_films.setText(f'{value[6]}')
             self.output_date_films.setText(f'{value[4]}')
-            self.output_nation_films.setText(f'{value[2]}')
-            self.output_style_films.setText(f'{value[3]}')
-            self.name_film.setText(f'{value[0]}')
-            self.table_description_films.appendPlainText(f'{value[6]}')
+            self.output_nation_films.setText(f'{value[3]}')
+            self.output_style_films.setText(f'{value[5]}')
+            self.name_film.setText(f'{value[1]}')
+            self.table_description_films.appendPlainText(f'{value[7]}')
 
     @staticmethod
     def clear_films_images():
@@ -367,23 +375,11 @@ class Films(QMainWindow):
             if "1" == image[:1]:
                 remove(f"data_images/{image}")
 
-    def downloading_an_image_from_the_internet_films(self, url, id_film):
+    def downloading_an_image_from_the_internet(self, url, id_film):
 
         """
         Фунцкия для скачивания изображения с интернета и так же она сохраняет изображение с интернета
-        на компьютере пользователя более подробное описание ниже ->
-
-        После того как пользователь выбрал фильм скачивается изображение с интернета
-        Так происходит каждый раз, загрузка немного тормозит программу
-        Поэтому можно реализовать функцию которая после выбранного фильма скачивает изображение с интернета и
-        сохранят на пк -> Тем самым после того как пользователь выберет этот фильм снова , он загрузится моментально
-
-        В базе данных добавить столбец id -> 1000001, 1000002, 1000003
-        Потом скачивается в папку под этим id и можно будет открывать изображение
-        Будет несколько типов:
-        1. 1000001 - Фильмы (Не будет изменений)
-        2. 2000001 - Сериалы (Возможны изменения)
-        3. 3000001 - Книги (Возможно изменение)
+        на компьютере пользователя
         """
 
         directory_images = listdir("data_images/")
@@ -405,36 +401,59 @@ class Films(QMainWindow):
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
-    def output_of_films_by_rating(self):
+    def basic_by_output(self):
+
+        """Базовый вывод"""
+
+        self.search_in_database("rating", "DESC")
+
+    def output_by_rating(self):
 
         """Вывод фильмов по рейтингу"""
 
-        self.search_for_data_in_the_database_film("rating", "DESC")
+        self.search_in_database("rating", "DESC")
 
-    def output_of_films_by_date(self):
+    def output_by_date(self):
 
         """Вывод фильмов по дате релиза"""
 
-        self.search_for_data_in_the_database_film("release", "DESC")
+        self.search_in_database("release", "DESC")
 
-    def output_of_films_by_name(self):
+    def output_by_name(self):
 
         """Вывод фильмов по названию"""
 
-        self.search_for_data_in_the_database_film("film", "ASC")
+        self.search_in_database("film", "ASC")
 
-    def search_criteria_films(self):
+    def search_by_criteria(self):
 
         """Сортировка по критериям"""
 
-        self.search_for_data_in_the_database_film("rating", "DESC")
+        self.search_in_database("rating", "DESC")
 
     #  -----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def exit():
+    def _exit():
         films.close()
         ex.show()
+
+    def closeEvent(self, event):
+
+        self.mediaPlayer.pause()
+
+    def keyPressEvent(self, event):
+        """Элементы передвигались в норму"""
+
+        # TODO: Элементы передвигались в норму после увелечинение в фулл окно
+        if event.key() == Qt.Key_Escape:
+            films.close()
+            ex.show()
+        if event.key() == Qt.Key_F11:
+            if self.isMaximized():
+                self.showNormal()
+            else:
+                self.showMaximized()
 
 
 class Serials(QMainWindow):
@@ -476,7 +495,7 @@ class Serials(QMainWindow):
 
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
 
-    def checking_the_search_serials(self):
+    def checking_search(self):
 
         """
 
@@ -820,6 +839,8 @@ class BooksComics(QMainWindow):
     def exit():
         books_and_comics.close()
         ex.show()
+
+
 
 
 if __name__ == '__main__':
