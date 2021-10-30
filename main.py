@@ -1,9 +1,9 @@
-import urllib.request
 from config import *
+import urllib.request
 from os import remove, listdir
 from pytube import YouTube
 import sys
-from PyQt5 import uic
+from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QApplication, QStyle, QMainWindow, QMessageBox
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPixmap
@@ -36,37 +36,27 @@ class Main(QMainWindow):
 
         #
 
-        global serial, films, books_and_comics
+        global serial, films, books_and_comics, settings
 
         films = Films()
         serial = Serials()
         books_and_comics = BooksComics()
+        settings = Settings()
 
         #
 
-        uic.loadUi('ui/main.ui', self)
+        loadUi('ui/main.ui', self)
 
         # Кнопки перехода в другое окно
 
         self.btn_films.clicked.connect(self.film_window)
         self.btn_serials.clicked.connect(self.serial_window)
         self.btn_books_and_comics.clicked.connect(self.books_and_comics_window)
-
+        self.btn_settings.clicked.connect(self.setting_window)
 
         # Дополнительные кнопки
 
         self.btn_exit.clicked.connect(self._exit)
-        self.btn_clear_all_images.clicked.connect(self.clear_all_images)
-
-    @staticmethod
-    def clear_all_images():
-
-        directory_images = listdir("data_images/")
-        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png'), directory_images))
-
-        if len(data_on_downloaded_images) > 0:
-            for i in data_on_downloaded_images:
-                remove(f"data_images/{i}")
 
     @staticmethod
     def _exit():
@@ -74,8 +64,8 @@ class Main(QMainWindow):
 
     @staticmethod
     def serial_window():
-        ex.close()
         serial.show()
+        ex.close()
 
     @staticmethod
     def books_and_comics_window():
@@ -87,12 +77,17 @@ class Main(QMainWindow):
         films.show()
         ex.close()
 
+    @staticmethod
+    def setting_window():
+        settings.show()
+        ex.close()
+
 
 class Films(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi('ui/film.ui', self)
+        loadUi('ui/film.ui', self)
 
         # Запоминает названия фильма
 
@@ -126,7 +121,8 @@ class Films(QMainWindow):
         # Кнопки
 
         self.btn_exit_films.clicked.connect(self._exit)
-        self.btn_clear_film_images.clicked.connect(self.clear_films_images)
+        self.btn_clear_film_images.clicked.connect(self.clear_images_confirmation)
+        self.btn_clear_trailers.clicked.connect(self.clear_trailers_confirmation)
 
         # Нажатие Поиска на Enter
         self.input_search_films.returnPressed.connect(self.checking_search)
@@ -149,18 +145,36 @@ class Films(QMainWindow):
 
         self.mediaPlayer.setVolume(50)
 
-    def download_trailer(self):
-        """Функция для отображеия трейлера"""
+    def clear_trailers_confirmation(self):
+        """Функция потверждение трейлеров """
 
-        """Если пользователь нажал 1 раз то высветиться предупреждение о том что будет загрузка с интернета 
-        и нужно будет подождать и если уже потом пользователь нажимает еще раз то проиходит загрузка и сохрание на пк
-        и если в следущий раз пользователь нажмет на кпоку видео загрузиться с пк сразу и не будет предупреждений """
+        if settings.get_confirmation() == "Вкл":
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить трейлеры?\n'
+                                         '(Функцию потверждения можно убрать в настройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_trailers()
+        else:
+            self.clear_trailers()
+
+    @staticmethod
+    def clear_trailers():
+        """Функция удаляет установлинные трейлеры"""
+        directory_videos = listdir("data_videos/")
+        data_on_downloaded_videos = set(
+            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+        )
+
+        for trailer in data_on_downloaded_videos:
+            remove(f"data_videos/{trailer}")
+
+    def download_trailer(self):
+        """Загрузка трейлера"""
 
         # TODO: Попробовать реализовать полноэкранный экран
-        # TODO: Нужно реализовать функцию удаления видео
-        # Видео будет на компьютере Причины:
-        # ДОлгая загрузка трейлера
-        # Если получится то оптимезировать процес и добавить загрузку с интернета
 
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
@@ -188,23 +202,36 @@ class Films(QMainWindow):
 
         else:
 
-            valid = QMessageBox.question(self,
-                                         'Подтверждение',
-                                         'Трейлер не скачен, нужно будет немного подождать',
-                                         QMessageBox.Yes, QMessageBox.No)
+            if settings.get_confirmation() == "Вкл":
 
-            if valid == QMessageBox.Yes:
-                """выводит трейлер с интернета на экран пользователю"""
+                valid = QMessageBox.question(self,
+                                             'Подтверждение',
+                                             'Трейлер не скачен, нужно будет немного подождать',
+                                             QMessageBox.Yes, QMessageBox.No)
 
-                yt = YouTube(url_film_trailer)
-                yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
-                yt.download("data_videos", filename + '.mp4')
+                if valid == QMessageBox.Yes:
 
-                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
-                self.pushButton_2.setEnabled(True)
-                self.ready_for_viewing.setText("Трейлер готов к запуску")
+                    """выводит трейлер с интернета на экран пользователю"""
+
+                    self.download_trailer_yt(url_film_trailer, filename)
+                else:
+                    self.ready_for_viewing.setText("Трейлер не скачен")
             else:
-                self.ready_for_viewing.setText("Трейлер не скачен")
+                self.download_trailer_yt(url_film_trailer, filename)
+
+    def download_trailer_yt(self, url, filename):
+
+        """Скачивает и выводит на экран трейлер"""
+
+        # Помогает сократить код
+
+        yt = YouTube(url)
+        yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
+        yt.download("data_videos", filename + '.mp4')
+
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+        self.pushButton_2.setEnabled(True)
+        self.ready_for_viewing.setText("Трейлер готов к запуску")
 
     def play(self):
 
@@ -255,12 +282,10 @@ class Films(QMainWindow):
     def creating_request(self):
 
         """
+        создания запроса в БД
+
         Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
         Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
-
-        Пример выполняемого запроса:
-        SELECT * FROM data WHERE style in ("Фантастика", "Ужасы")
-        SELECT * FROM <БД> WHERE <Выбранная ячейка> in <Ищем>
         """
 
         return f'''('{"', '".join(self.data_criteria)}')'''
@@ -287,15 +312,22 @@ class Films(QMainWindow):
 
         """
 
-        # TODO: Добавить в подробную информацию -> чей фильм
+        # TODO: Добавить в подробную информацию -> чей фильм (Тест функция возможно не попадет в релиз)
+
         # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
         #  Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
-        #  !!!ВАЖНО!!! Должно происходить автоматически
+        #  !!!ВАЖНО!!! Должно происходить автоматически (Тест функция возможно не попадет в релиз)
 
-        film = self.input_search_films.text().strip().capitalize()
+        input_search_data = self.input_search_films.text().strip().capitalize()
 
-        verification_film = sql.execute(f'SELECT film FROM data WHERE film = "{film}"')
-        if verification_film.fetchone() is None:
+        # print(input_search_data)
+
+        verification_film = sql.execute(f'SELECT film FROM data WHERE film = "{input_search_data}"').fetchone()[0]
+        # verification_producer = sql.execute(f'SELECT producer, film FROM data WHERE producer = "{input_search_data}"'
+        #                                   ).fetchmany(2)
+        # print(verification_film)
+        # print(verification_producer)
+        if verification_film is None:
             self.image_films.setText("Фильм не найден....")
             self.table_description_films.clear()
             self.output_rating_films.setText('')
@@ -306,9 +338,8 @@ class Films(QMainWindow):
             self.name_film.setText('')
             self.table_description_films.appendPlainText('')
             self.name_film_global = ''
-
         else:
-            self.information_output(film)
+            self.information_output(verification_film)
 
     def search_in_database(self, sorting, type_sorting):
 
@@ -353,7 +384,7 @@ class Films(QMainWindow):
 
             # Изображение
 
-            self.downloading_an_image_from_the_internet(value[8], value[0])
+            self.downloading_image(value[8], value[0])
 
             # Остальная информация
 
@@ -365,17 +396,36 @@ class Films(QMainWindow):
             self.name_film.setText(f'{value[1]}')
             self.table_description_films.appendPlainText(f'{value[7]}')
 
+    def clear_images_confirmation(self):
+
+        """Подтверждение на удаление"""
+
+        if settings.get_confirmation() == "Вкл":
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить изображения?\n'
+                                         '(Функцию потверждение можно убрать в нстройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_images()
+        else:
+            self.clear_images()
+
     @staticmethod
-    def clear_films_images():
+    def clear_images():
+
+        """Функция удаляет изображения"""
 
         directory_images = listdir("data_images/")
-        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images))
-
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images)
+        )
+        print(data_on_downloaded_images)
         for image in data_on_downloaded_images:
-            if "1" == image[:1]:
-                remove(f"data_images/{image}")
+            remove(f"data_images/{image}")
 
-    def downloading_an_image_from_the_internet(self, url, id_film):
+    def downloading_image(self, url, id_film):
 
         """
         Фунцкия для скачивания изображения с интернета и так же она сохраняет изображение с интернета
@@ -383,7 +433,9 @@ class Films(QMainWindow):
         """
 
         directory_images = listdir("data_images/")
-        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images))
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images)
+        )
 
         if id_film + ".png" in data_on_downloaded_images:
             pixmap = QPixmap(f"data_images/{id_film}.png")
@@ -441,11 +493,13 @@ class Films(QMainWindow):
     def closeEvent(self, event):
 
         self.mediaPlayer.pause()
+        self.basic_by_output()
 
     def keyPressEvent(self, event):
         """Элементы передвигались в норму"""
 
-        # TODO: Элементы передвигались в норму после увелечинение в фулл окно
+        # TODO: Элементы передвигались в норму и увеличивались после увелечинение в фулл окно ->
+        #  Тест функция возможно не будет добавлена
         if event.key() == Qt.Key_Escape:
             films.close()
             ex.show()
@@ -458,11 +512,11 @@ class Films(QMainWindow):
 
 class Serials(QMainWindow):
 
-    # TODO: Сделал пример -> нужно переделать под сериалы
+    # TODO: Переделать класс
 
     def __init__(self):
         super().__init__()
-        uic.loadUi('ui/serials.ui', self)
+        loadUi('ui/serials.ui', self)
 
         self.setWindowIcon(QIcon('icon.png'))
 
@@ -719,7 +773,7 @@ class BooksComics(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi('ui/books_comics.ui', self)
+        loadUi('ui/books_comics.ui', self)
 
         self.setWindowIcon(QIcon('icon.png'))
 
@@ -841,6 +895,89 @@ class BooksComics(QMainWindow):
         ex.show()
 
 
+class Settings(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+        loadUi('ui/settings.ui', self)
+
+        self.add_confirmation_item()
+        self.btn_exit.clicked.connect(self.exit)
+        self.confirmation.currentTextChanged.connect(self.set_confirmation)
+        self.btn_clear_all_images.clicked.connect(self.clear_all_images_confirmation)
+        self.btn_clear_all_trailers.clicked.connect(self.clear_all_trailers_confirmation)
+
+    def clear_all_images_confirmation(self):
+
+        if settings.get_confirmation() == "Выкл":
+            self.clear_all_images()
+        else:
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить все изображения?\n'
+                                         '(Функцию потверждения можно выключить в настройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_all_images()
+
+    def clear_all_trailers_confirmation(self):
+
+        if settings.get_confirmation() == "Выкл":
+            self.clear_all_trailers()
+        else:
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить все трейлеры?\n'
+                                         '(Функцию потверждения можно выключить в настройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_all_trailers()
+
+    @staticmethod
+    def clear_all_images():
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png'), directory_images)
+        )
+
+        if len(data_on_downloaded_images) > 0:
+            for image in data_on_downloaded_images:
+                remove(f"data_images/{image}")
+
+    @staticmethod
+    def clear_all_trailers():
+        directory_videos = listdir("data_videos/")
+        data_on_downloaded_videos = set(
+            filter(lambda p: p.endswith(".mp4"), directory_videos)
+        )
+
+        if len(data_on_downloaded_videos) > 0:
+            for video in data_on_downloaded_videos:
+                remove(f"data_videos/{video}")
+
+    def add_confirmation_item(self):
+        if sql.execute("""SELECT confirmation FROM user_data""").fetchone()[0] == "Вкл":
+            self.confirmation.addItem("Вкл")
+            self.confirmation.addItem("Выкл")
+        else:
+            self.confirmation.addItem("Выкл")
+            self.confirmation.addItem("Вкл")
+
+    @staticmethod
+    def set_confirmation(text):
+        sql.execute(f"""UPDATE user_data SET confirmation = '{text}' WHERE id = 1""")
+        db.commit()
+
+    @staticmethod
+    def get_confirmation():
+        return sql.execute("""SELECT confirmation FROM user_data""").fetchone()[0]
+
+    @staticmethod
+    def exit():
+        settings.close()
+        ex.show()
 
 
 if __name__ == '__main__':

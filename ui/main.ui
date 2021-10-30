@@ -78,17 +78,17 @@
      <string>Выход</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_clear_all_images">
+   <widget class="QPushButton" name="btn_settings">
     <property name="geometry">
      <rect>
       <x>200</x>
       <y>130</y>
-      <width>201</width>
+      <width>191</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Очистить изображения</string>
+     <string>Настройки</string>
     </property>
    </widget>
   </widget>
