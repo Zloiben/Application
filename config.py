@@ -1,6 +1,6 @@
 import sqlite3
 
-db = sqlite3.connect("database.db")
+db = sqlite3.connect("data_base.db")
 sql = db.cursor()
 
 # Таблица data - Фильмы

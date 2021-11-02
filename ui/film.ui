@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>847</width>
-    <height>998</height>
+    <width>842</width>
+    <height>976</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,7 +103,7 @@ border-color: rgb(119, 143, 81);
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>600</y>
+      <y>590</y>
       <width>501</width>
       <height>391</height>
      </rect>
@@ -137,7 +137,7 @@ border-color: rgb(119, 143, 81);
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>420</y>
+      <y>410</y>
       <width>501</width>
       <height>181</height>
      </rect>
@@ -228,8 +228,8 @@ border-color: rgb(119, 143, 81);</string>
    <widget class="QLineEdit" name="input_search_films">
     <property name="geometry">
      <rect>
-      <x>350</x>
-      <y>40</y>
+      <x>340</x>
+      <y>30</y>
       <width>481</width>
       <height>31</height>
      </rect>
@@ -272,9 +272,9 @@ border-color: rgb(119, 143, 81);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>40</y>
-       <width>291</width>
-       <height>431</height>
+       <y>30</y>
+       <width>301</width>
+       <height>441</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -455,7 +455,7 @@ border-color: rgb(119, 143, 81);</string>
     <widget class="QLabel" name="name_film">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>0</y>
        <width>281</width>
        <height>31</height>
@@ -488,7 +488,7 @@ border-color: rgb(119, 143, 81);</string>
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>110</y>
+      <y>100</y>
       <width>501</width>
       <height>271</height>
      </rect>
@@ -503,7 +503,7 @@ border-color: rgb(119, 143, 81);</string>
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>390</y>
+      <y>380</y>
       <width>501</width>
       <height>25</height>
      </rect>
@@ -600,7 +600,7 @@ border-color: rgb(119, 143, 81);</string>
    <widget class="QLabel" name="ready_for_viewing">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>370</x>
       <y>80</y>
       <width>511</width>
       <height>21</height>
@@ -636,7 +636,7 @@ border-color: rgb(119, 143, 81);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>847</width>
+     <width>842</width>
      <height>21</height>
     </rect>
    </property>

@@ -178,15 +178,15 @@ class Films(QMainWindow):
 
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
-            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+            filter(lambda p: p.endswith('.mp4') and p.startswith("F"), directory_videos)
         )
 
         filename = ''
         url_film_trailer = ''
 
-        for value in sql.execute(f"SELECT videos, id FROM data WHERE film = '{self.name_film_global}'"):
+        for value in sql.execute(f"SELECT video, id FROM data_films WHERE film = '{self.name_film_global}'"):
 
-            filename = value[1]
+            filename = "F" + str(value[1])
             url_film_trailer = value[0]
 
         if self.name_film_global == '':
@@ -322,7 +322,7 @@ class Films(QMainWindow):
 
         # print(input_search_data)
 
-        verification_film = sql.execute(f'SELECT film FROM data WHERE film = "{input_search_data}"').fetchone()[0]
+        verification_film = sql.execute(f'SELECT film FROM data_films WHERE film = "{input_search_data}"').fetchone()[0]
         # verification_producer = sql.execute(f'SELECT producer, film FROM data WHERE producer = "{input_search_data}"'
         #                                   ).fetchmany(2)
         # print(verification_film)
@@ -350,14 +350,14 @@ class Films(QMainWindow):
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                     SELECT * FROM data
+                     SELECT * FROM data_films
                      WHERE style in {self.creating_request()}
                      ORDER BY {sorting} {type_sorting}"""):
                 self.add_item(value, count)
                 count += 1
         else:
             for value in sql.execute(f"""
-                     SELECT * FROM data
+                     SELECT * FROM data_films
                      ORDER BY {sorting} {type_sorting}"""):
                 self.add_item(value, count)
                 count += 1
@@ -380,11 +380,10 @@ class Films(QMainWindow):
         self.ready_for_viewing.setText(" ")
         self.name_film_global = film
 
-        for value in sql.execute(f"SELECT * FROM data WHERE film = '{film}'"):
+        for value in sql.execute(f"SELECT * FROM data_films WHERE film = '{film}'"):
 
             # Изображение
-
-            self.downloading_image(value[8], value[0])
+            self.downloading_image(value[9], value[0])
 
             # Остальная информация
 
@@ -419,7 +418,7 @@ class Films(QMainWindow):
 
         directory_images = listdir("data_images/")
         data_on_downloaded_images = set(
-            filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images)
+            filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
         )
         print(data_on_downloaded_images)
         for image in data_on_downloaded_images:
@@ -434,16 +433,16 @@ class Films(QMainWindow):
 
         directory_images = listdir("data_images/")
         data_on_downloaded_images = set(
-            filter(lambda p: p.endswith('.png') and p.startswith("1"), directory_images)
+            filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
         )
 
-        if id_film + ".png" in data_on_downloaded_images:
-            pixmap = QPixmap(f"data_images/{id_film}.png")
+        if 'F' + str(id_film) + ".png" in data_on_downloaded_images:
+            pixmap = QPixmap(f"data_images/F{id_film}.png")
             self.image_films.setPixmap(pixmap)
         else:
             data = urllib.request.urlopen(url).read()
 
-            f = open(f"data_images/{id_film}.png", "wb")
+            f = open(f"data_images/F{str(id_film)}.png", "wb")
             f.write(data)
             f.close()
 
@@ -777,117 +776,74 @@ class BooksComics(QMainWindow):
 
         self.setWindowIcon(QIcon('icon.png'))
 
-        self.data_criteria_books = set()
+        self.data_criteria = set()
 
         # Кнопки Основных критерий
 
-        self.btn_date_DESC_books.clicked.connect(self.output_of_books_by_date)
-        self.btn_name_DESC_books.clicked.connect(self.output_of_books_by_name)
+        self.btn_date_DESC.clicked.connect(self.output_by_date)
+        self.btn_name_DESC.clicked.connect(self.output_by_name)
 
         self.btn_exit.clicked.connect(self.exit)
 
-        # Критерии
+    def add_item(self, value, count):
 
-        self.checkBox.clicked.connect(self.serials_sort)
-        self.checkBox_2.clicked.connect(self.serials_sort)
-        self.checkBox_3.clicked.connect(self.serials_sort)
-        self.checkBox_4.clicked.connect(self.serials_sort)
-        self.checkBox_5.clicked.connect(self.serials_sort)
+        """Вывод фильмов и краткой инфмормации в таблицу"""
 
-        self.pushButton.clicked.connect(self.search_criteria)
+        self.table_books.addItem(count,
+                                 value[0],
+                                 value[1],
+                                 value[2],
+                                 value[3],
+                                 value[4],
+                                 value[5],
+                                 value[6],
+                                 value[7],
+                                 value[8])
 
-        # №. book_name, [release], author, (style), |toms|
-        # 4. Восхождение Героя Щита. Том 11, [2021], Кю Айя, (Манга), |12|
+    def order_output_from_the_database(self):
+        """Заголовок в котором показан порядок вывода информации"""
+        pass
 
-        count = 1
-        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
-        for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
-            self.table_books.appendPlainText(f'{count}. '
-                                             f'{value[0]}, '
-                                             f'[{value[1]}], '
-                                             f'{value[2]}, '
-                                             f'({value[3]}), '
-                                             f'|{value[4]}|\n')
-            count += 1
+    def search_in_database(self, sorting, type_sorting):
 
-    # ----------------------------------------------Основные Критерии---------------------------------------------------
+        """Функция для поиска данных в базе данных и вывода в таблицу"""
 
-    def output_of_books_by_date(self):
         self.table_books.clear()
-        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
+        self.order_output_from_the_database()
         count = 1
-        if len(self.data_criteria_books) > 0:
-            for value in sql.execute(f"SELECT * FROM data_books WHERE style in {self.sort()} ORDER BY release DESC"):
-                self.table_books.appendPlainText(f'{count}. '
-                                                 f'{value[0]}, '
-                                                 f'[{value[1]}], '
-                                                 f'({value[2]}), '
-                                                 f'{value[3]}, '
-                                                 f'|{value[4]}|\n')
+        if len(self.data_criteria) > 0:
+            for value in sql.execute(f"""
+                     SELECT * FROM data_serials
+                     WHERE style in {self.creating_request()}
+                     ORDER BY {sorting} {type_sorting}"""):
+                self.add_item(value, count)
                 count += 1
         else:
-            for value in sql.execute("SELECT * FROM data_books ORDER BY release DESC"):
-                self.table_books.appendPlainText(f'{count}. '
-                                                 f'{value[0]}, '
-                                                 f'[{value[1]}], '
-                                                 f'{value[2]}, '
-                                                 f'({value[3]}), '
-                                                 f'|{value[4]}|\n')
+            for value in sql.execute(f"""
+                     SELECT * FROM data_books
+                     ORDER BY {sorting} {type_sorting}"""):
+                self.add_item(value, count)
                 count += 1
 
-    def output_of_books_by_name(self):
-        self.table_books.clear()
-        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
-        count = 1
-        if len(self.data_criteria_books) > 0:
-            for value in sql.execute(f"SELECT * FROM data_books WHERE style in {self.sort()} ORDER BY book_name ASC"):
-                self.table_books.appendPlainText(f'{count}. '
-                                                 f'{value[0]}, '
-                                                 f'[{value[1]}], '
-                                                 f'({value[2]}), '
-                                                 f'{value[3]}, '
-                                                 f'|{value[4]}|\n')
-                count += 1
-        else:
-            for value in sql.execute("SELECT * FROM data_books ORDER BY book_name ASC"):
-                self.table_books.appendPlainText(f'{count}. '
-                                                 f'{value[0]}, '
-                                                 f'[{value[1]}], '
-                                                 f'{value[2]}, '
-                                                 f'({value[3]}), '
-                                                 f'|{value[4]}|\n')
-                count += 1
+    def basic_by_output(self):
 
-    # --------------------------------------------<Сортировка Критерий>-------------------------------------------------
+        """Базовый вывод"""
+        pass
 
-    # Входные данные: {'Фантастика', 'Ужасы'}
-    # Возращает: ('Фантастика', 'Ужасы')
-    # Нужно для команды в базу данных и для избежание не верных выводов данных
-    # SELECT * FROM data WHERE style in ('Фантастика', 'Ужасы')
+    def output_by_date(self):
 
-    def sort(self):
-        return f'''('{"', '".join(self.data_criteria_books)}')'''
+        """Вывод книг по дате"""
+        pass
 
-    def serials_sort(self, state):
-        if state:
-            self.data_criteria_books.add(self.sender().text())
-        else:
-            self.data_criteria_books.remove(self.sender().text())
+    def output_by_name(self):
 
-    def search_criteria(self):
-        self.table_books.clear()
-        self.table_books.appendPlainText('№. book_name, [release], author, (style), |toms|\n')
-        count = 1
-        for value in sql.execute(f"SELECT * FROM data_books WHERE style in {self.sort()} ORDER BY release DESC"):
-            self.table_books.appendPlainText(f'{count}. '
-                                             f'{value[0]}, '
-                                             f'[{value[1]}], '
-                                             f'({value[2]}), '
-                                             f'{value[3]}, '
-                                             f'|{value[4]}|\n')
-            count += 1
+        """вывод книг по названию"""
+        pass
 
-    # ------------------------------------------------------------------------------------------------------------------
+    def output_bu_sort_criteria(self):
+
+        """Вывод книги по нажатию на жанр"""
+        pass
 
     @staticmethod
     def exit():
@@ -909,7 +865,7 @@ class Settings(QMainWindow):
 
     def clear_all_images_confirmation(self):
 
-        if settings.get_confirmation() == "Выкл":
+        if self.get_confirmation() == "Выкл":
             self.clear_all_images()
         else:
             valid = QMessageBox.question(self,
@@ -923,7 +879,7 @@ class Settings(QMainWindow):
 
     def clear_all_trailers_confirmation(self):
 
-        if settings.get_confirmation() == "Выкл":
+        if self.get_confirmation() == "Выкл":
             self.clear_all_trailers()
         else:
             valid = QMessageBox.question(self,
@@ -958,7 +914,7 @@ class Settings(QMainWindow):
                 remove(f"data_videos/{video}")
 
     def add_confirmation_item(self):
-        if sql.execute("""SELECT confirmation FROM user_data""").fetchone()[0] == "Вкл":
+        if sql.execute("""SELECT confirmation FROM user""").fetchone()[0] == "Вкл":
             self.confirmation.addItem("Вкл")
             self.confirmation.addItem("Выкл")
         else:
@@ -967,12 +923,12 @@ class Settings(QMainWindow):
 
     @staticmethod
     def set_confirmation(text):
-        sql.execute(f"""UPDATE user_data SET confirmation = '{text}' WHERE id = 1""")
+        sql.execute(f"""UPDATE user SET confirmation = '{text}' WHERE id = 1""")
         db.commit()
 
     @staticmethod
     def get_confirmation():
-        return sql.execute("""SELECT confirmation FROM user_data""").fetchone()[0]
+        return sql.execute("""SELECT confirmation FROM user""").fetchone()[0]
 
     @staticmethod
     def exit():
