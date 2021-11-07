@@ -9,6 +9,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QUrl, Qt
 
+
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
 # ----------------------------------------------------------------------------------------------------------------------
@@ -26,7 +27,6 @@ from PyQt5.QtCore import QUrl, Qt
 
 
 class Main(QMainWindow):
-
     """ Главное окно"""
 
     def __init__(self):
@@ -100,7 +100,7 @@ class Films(QMainWindow):
 
         self.basic_by_output()
 
-    # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
+        # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
 
         # Все критерии -> Вывод фильмов по критериям
 
@@ -185,7 +185,6 @@ class Films(QMainWindow):
         url_film_trailer = ''
 
         for value in sql.execute(f"SELECT video, id FROM data_films WHERE film = '{self.name_film_global}'"):
-
             filename = "F" + str(value[1])
             url_film_trailer = value[0]
 
@@ -381,7 +380,6 @@ class Films(QMainWindow):
         self.name_film_global = film
 
         for value in sql.execute(f"SELECT * FROM data_films WHERE film = '{film}'"):
-
             # Изображение
             self.downloading_image(value[9], value[0])
 
@@ -511,261 +509,427 @@ class Films(QMainWindow):
 
 class Serials(QMainWindow):
 
-    # TODO: Переделать класс
-
     def __init__(self):
         super().__init__()
         loadUi('ui/serials.ui', self)
 
+        self.name_serials_global = ''
+
+        self.data_criteria = set()
+
         self.setWindowIcon(QIcon('icon.png'))
 
-        self.basic_output_serials()
+        self.basic_by_output()
 
-    # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
+        # ---------------------------------------------<Кнопки и интерфейс>---------------------------------------------
 
         self.data_criteria_serials = set()
 
         # Критерии
 
-        self.checkBox.clicked.connect(self.serials_sort)
-        self.checkBox_2.clicked.connect(self.serials_sort)
-        self.checkBox_3.clicked.connect(self.serials_sort)
+        self.checkBox.clicked.connect(self.sort)
+        self.checkBox_2.clicked.connect(self.sort)
+        self.checkBox_3.clicked.connect(self.sort)
 
         # Кнопки
 
-        self.btn_search_serials.clicked.connect(self.search_criteria_serials)
-        self.btn_exit_serials.clicked.connect(self.exit)
+        self.btn_exit_serials.clicked.connect(self._exit)
+        self.btn_clear_serials_images.clicked.connect(self.clear_images_confirmation)
+        self.btn_clear_trailers.clicked.connect(self.clear_trailers_confirmation)
 
         # Кнопки Основных критерий
 
-        self.btn_date_DESC_serials.clicked.connect(self.output_of_serials_by_date)
-        self.btn_name_DESC_serials.clicked.connect(self.output_of_serials_by_name)
-        self.btn_rating_DESC_serials.clicked.connect(self.output_of_serials_by_rating)
+        self.btn_date_DESC_serials.clicked.connect(self.output_by_date)
+        self.btn_name_DESC_serials.clicked.connect(self.output_by_name)
+        self.btn_rating_DESC_serials.clicked.connect(self.output_by_rating)
 
         # Кнопка нужна для вывода подробной информации -> При нажатии на фильм будет выведина полная информация
+        self.table_serials.clicked.connect(self.movie_selection)
 
-        self.table_serials.clicked.connect(self.movie_selection_serials)
+        # Нажатие Поиска на Enter
+        self.input_search_serials.returnPressed.connect(self.checking_search)
+
+        #
+
+        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+
+        self.mediaPlayer.positionChanged.connect(self.position_changed)
+        self.mediaPlayer.durationChanged.connect(self.duration_changed)
+        self.mediaPlayer.stateChanged.connect(self.media_state_changed)
+        self.horizontalSlider.sliderMoved.connect(self.set_position)
+        self.horizontalSlider_2.sliderMoved.connect(self.set_volume)
+
+        self.mediaPlayer.setVideoOutput(self.widget_film_trailer)
+        self.pushButton.clicked.connect(self.download_trailer)
+        self.pushButton_2.clicked.connect(self.play)
+
+        self.mediaPlayer.setVolume(50)
+
+        self.table_serials.clicked.connect(self.movie_selection)
 
     # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
+    def clear_trailers_confirmation(self):
+        """Функция потверждение трейлеров """
+
+        if settings.get_confirmation() == "Вкл":
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить трейлеры?\n'
+                                         '(Функцию потверждения можно убрать в настройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_trailers()
+        else:
+            self.clear_trailers()
+
+    @staticmethod
+    def clear_trailers():
+        """Функция удаляет установлинные трейлеры"""
+        directory_videos = listdir("data_videos/")
+        data_on_downloaded_videos = set(
+            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+        )
+
+        for trailer in data_on_downloaded_videos:
+            remove(f"data_videos/{trailer}")
+
+    def download_trailer(self):
+        """Загрузка трейлера"""
+
+        # TODO: Попробовать реализовать полноэкранный экран
+
+        directory_videos = listdir("data_videos/")
+        data_on_downloaded_videos = set(
+            filter(lambda p: p.endswith('.mp4') and p.startswith("F"), directory_videos)
+        )
+
+        filename = ''
+        url_film_trailer = ''
+
+        for value in sql.execute(f"SELECT video, id FROM data_films WHERE film = '{self.name_film_global}'"):
+            filename = "F" + str(value[1])
+            url_film_trailer = value[0]
+
+        if self.name_film_global == '':
+            QMessageBox.warning(self, "Информация", "Вам нужно выбрать фильм")
+
+        elif filename + '.mp4' in data_on_downloaded_videos:
+
+            """выводит трейлер с папки скаченных трейлеров на экран пользователю"""
+
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+            self.pushButton_2.setEnabled(True)
+            self.ready_for_viewing.setText("Трейлер готов к запуску")
+
+        else:
+
+            if settings.get_confirmation() == "Вкл":
+
+                valid = QMessageBox.question(self,
+                                             'Подтверждение',
+                                             'Трейлер не скачен, нужно будет немного подождать',
+                                             QMessageBox.Yes, QMessageBox.No)
+
+                if valid == QMessageBox.Yes:
+
+                    """выводит трейлер с интернета на экран пользователю"""
+
+                    self.download_trailer_yt(url_film_trailer, filename)
+                else:
+                    self.ready_for_viewing.setText("Трейлер не скачен")
+            else:
+                self.download_trailer_yt(url_film_trailer, filename)
+
+    def download_trailer_yt(self, url, filename):
+
+        """Скачивает и выводит на экран трейлер"""
+
+        # Помогает сократить код
+
+        yt = YouTube(url)
+        yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
+        yt.download("data_videos", filename + '.mp4')
+
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+        self.pushButton_2.setEnabled(True)
+        self.ready_for_viewing.setText("Трейлер готов к запуску")
+
+    def play(self):
+
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.mediaPlayer.pause()
+        else:
+            self.mediaPlayer.play()
+
+    def media_state_changed(self):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.pushButton_2.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+        else:
+            self.pushButton_2.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+
+    def position_changed(self, position):
+        self.horizontalSlider.setValue(position)
+
+    def duration_changed(self, duration):
+        self.horizontalSlider.setRange(0, duration)
+
+    def set_position(self, position):
+        self.mediaPlayer.setPosition(position)
+
+    def set_volume(self):
+        value = self.horizontalSlider_2.value()
+        self.mediaPlayer.setVolume(value)
+        self.statusbar.showMessage("Громкость " + str(value) + " %")
+
+    # ------------------------<Дополнительные функции /* Для удобства работы с текстом *\>------------------------------
+
+    def order_output_from_the_database(self):
+
+        """Заголовок в котором показан порядок вывода информации"""
+
+        self.table_serials.addItem('№. serial, [rating], nation, (release), style, age')
+
+    def sort(self, state):
+
+        """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
+
+        if state:
+            self.data_criteria.add(self.sender().text())
+        else:
+            self.data_criteria.remove(self.sender().text())
+
+        self.search_by_criteria()
+
+    def creating_request(self):
+
+        """
+        создания запроса в БД
+
+        Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
+        Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
+        """
+
+        return f'''('{"', '".join(self.data_criteria)}')'''
+
+    def add_item(self, value, count):
+
+        """Вывод фильмов и краткой инфмормации в таблицу"""
+
+        self.table_serials.addItem(f'{count}. '
+                                   f'{value[1]}, '
+                                   f'{value[2]}, '
+                                   f'[{value[3]}], '
+                                   f'({value[4]}), '
+                                   f'{value[5]}, '
+                                   f'{value[6]}')
 
     def checking_search(self):
 
         """
 
-            Функция дял проверки запроса на поиск ->
-            Если фильм не найден то фукция убирает все и пишет "Фильм не найден".
-            Если найден фильм то выводтся подробная информация.
-
-        """
-
-        # TODO: Добавить в подробную информацию -> чей фильм
-        # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
-        # Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
-        # !!!ВАЖНО!!! Должно происходить автоматически
-
-        film = self.input_search_serials.text().strip().capitalize()
-
-        verification_film = sql.execute(f'SELECT film FROM data_serials WHERE film = "{film}"')
-
-        if verification_film.fetchone() is None:
-
-            self.image_serial.setText("Фильм не найден....")
-            self.table_description_serial.clear()
-            self.output_rating_serial.setText('')
-            self.output_age_serial.setText('')
-            self.output_date_serial.setText('')
-            self.output_nation_serial.setText('')
-            self.output_style_serial.setText('')
-            self.name_serial.setText('')
-            self.table_description_serial.appendPlainText('')
-
-        else:
-            self.information_output_serials(film)
-
-    def serials_sort(self, state):
-        if state:
-            self.data_criteria_serials.add(self.sender().text())
-        else:
-            self.data_criteria_serials.remove(self.sender().text())
-
-        self.search_criteria_serials()
-
-    def the_order_of_output_from_the_database_serials(self):
-        self.table_serials.addItem('№. serials, [rating], nation, (release), style, age, |seasons|')
-
-    def creating_request_serials(self):
-
-        """
-        Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
-        Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
-
-        Пример выполняемого запроса:
-            SELECT * FROM data WHERE style in ("Фантастика", "Ужасы")
-            SELECT * FROM <БД> WHERE <Выбранная ячейка> in <Ищем>
-        """
-
-        return f'''('{"', '".join(self.data_criteria_serials)}')'''
-
-    def table_film_add_item_serials(self, value, count):
-
-        """Вывод сериалов и краткой информации в таблицу"""
-
-        self.table_serials.addItem(f'{count}. '
-                                   f'{value[0]}, '
-                                   f'{value[1]}, '
-                                   f'[{value[2]}], '
-                                   f'({value[3]}), '
-                                   f'{value[4]}, '
-                                   f'{value[5]}, '
-                                   f'|{value[6]}|')
-
-    def checking_the_search_serial(self):
-
-        """
-
         Функция дял проверки запроса на поиск ->
-        Если сериал не найден то фукция убирает все и пишет "Сериал не найден".
-        Если найден сериал то выводтся подробная информация.
+        Если фильм не найден то фукция убирает все и пишет "Фильм не найден".
+        Если найден фильм то выводтся подробная информация.
 
         """
-        pass
 
-    def search_for_data_in_the_database_serials(self, sorting, type_sorting):
+        # TODO: Улучишь поиск чтобы он мог искать не только по названию, но и по главным ролям. ->
+        #  Если будет сделано то нужно не забыть выводить главных герояв в подробной информаци
+        #  !!!ВАЖНО!!! Должно происходить автоматически (Тест функция возможно не попадет в релиз)
+
+        input_search_data = self.input_search_serials.text().strip().capitalize()
+
+        print(input_search_data)
+
+        verification_serials = \
+            sql.execute(f'SELECT serial FROM data_serials WHERE serial = "{input_search_data}"').fetchone()[0]
+        # verification_producer = sql.execute(f'SELECT producer, film FROM data WHERE producer = "{input_search_data}"'
+        #                                   ).fetchmany(2)
+        # print(verification_film)
+        # print(verification_producer)
+        if verification_serials is None:
+            self.image_serials.setText("Фильм не найден....")
+            self.table_description_films.clear()
+            self.output_rating_films.setText('')
+            self.output_age_films.setText('')
+            self.output_date_films.setText('')
+            self.output_seasons_films.setText('')
+            self.output_nation_films.setText('')
+            self.output_style_films.setText('')
+            self.name_film.setText('')
+            self.table_description_serials.appendPlainText('')
+            self.name_serial_global = ''
+        else:
+            self.information_output(verification_serials)
+
+    def search_in_database(self, sorting, type_sorting):
 
         """Функция для поиска данных в базе данных и вывода в таблицу"""
 
         self.table_serials.clear()
-        self.the_order_of_output_from_the_database_serials()
+        self.order_output_from_the_database()
         count = 1
-        if len(self.data_criteria_serials) > 0:
+        if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                      SELECT * FROM data_serials
-                     WHERE style in {self.creating_request_serials()}
+                     WHERE style in {self.creating_request()}
                      ORDER BY {sorting} {type_sorting}"""):
-                self.table_film_add_item_serials(value, count)
+                self.add_item(value, count)
                 count += 1
         else:
             for value in sql.execute(f"""
                      SELECT * FROM data_serials
                      ORDER BY {sorting} {type_sorting}"""):
-                self.table_film_add_item_serials(value, count)
+                self.add_item(value, count)
                 count += 1
-
-    # ----------------------------------------------<Базовый вывод>-----------------------------------------------------
-
-    def basic_output_serials(self):
-        count = 1
-        self.the_order_of_output_from_the_database_serials()
-        for value in sql.execute("SELECT * FROM data_serials ORDER BY rating DESC"):
-            self.table_film_add_item_serials(value, count)
-            count += 1
 
     # --------------------------------<Функции для вывода подробной информации фильма>----------------------------------
 
-    def movie_selection_serials(self):
-        selected_movie_serials = self.table_serials.currentItem().text()[3:].split(", ")
-        if selected_movie_serials[1] != 'serials':
-            self.information_output_serials(selected_movie_serials[1])
+    def movie_selection(self):
 
-    def information_output_serials(self, image_name):
+        """Получаем выбранный фильм и редактируем под запрос"""
+
+        selected_serial = self.table_serials.currentItem().text()[3:].split(", ")
+        if selected_serial[0] != 'serial':
+            self.information_output(selected_serial[0])
+
+    def information_output(self, serial):
+
+        """Функция для подробной информации по выбранному фильму"""
 
         self.table_description_serials.clear()
+        self.ready_for_viewing.setText(" ")
+        self.name_serial_global = serial
 
-        for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{image_name}'"):
-
-            self.downloading_an_image_from_the_internet_serials(value[-1], value[0])
+        for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{serial}'"):
+            # Изображение
+            self.downloading_image(value[9], value[0])
 
             # Остальная информация
-
-            self.output_rating_serials.setText(f'{value[1]}')
-            self.output_age_serials.setText(f'{value[5]}')
-            self.output_data_serials.setText(f'{value[3]}')
-            self.output_nation_serials.setText(f'{value[2]}')
-            self.output_style_serials.setText(f'{value[4]}')
-            self.name_film.setText(f'{value[0]}')
+            self.output_rating_films.setText(f'{value[2]}')
+            self.output_age_films.setText(f'{value[6]}')
+            self.output_date_films.setText(f'{value[4]}')
+            self.output_seasons_films.setText(f'{value[11]}')
+            self.output_nation_films.setText(f'{value[3]}')
+            self.output_style_films.setText(f'{value[5]}')
+            self.name_film.setText(f'{value[1]}')
             self.table_description_serials.appendPlainText(f'{value[7]}')
 
+            # PS(Иван) Решил не менять названия Qlabel для удобста(Да я ленивый :)э)
+
+    def clear_images_confirmation(self):
+
+        """Подтверждение на удаление"""
+
+        if settings.get_confirmation() == "Вкл":
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить изображения?\n'
+                                         '(Функцию потверждение можно убрать в нстройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_images()
+        else:
+            self.clear_images()
+
     @staticmethod
-    def clear_serials_images():
+    def clear_images():
+
+        """Функция удаляет изображения"""
 
         directory_images = listdir("data_images/")
-        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("2"), directory_images))
-
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
+        )
+        print(data_on_downloaded_images)
         for image in data_on_downloaded_images:
-            if "2" == image[:1]:
-                remove(f"data_images/{image}")
+            remove(f"data_images/{image}")
 
-    def downloading_an_image_from_the_internet_serials(self, url_name, id_serial):
+    def downloading_image(self, url, id_film):
 
         """
         Фунцкия для скачивания изображения с интернета и так же она сохраняет изображение с интернета
-        на компьютере пользователя более подробное описание ниже ->
-
-        После того как пользователь выбрал фильм скачивается изображение с интернета
-        Так происходит каждый раз, загрузка немного тормозит программу
-        Поэтому можно реализовать функцию которая после выбранного фильма скачивает изображение с интернета и
-        сохранят на пк -> Тем самым после того как пользователь выберет этот фильм снова , он загрузится моментально
-
-        В базе данных добавить столбец id -> 1000001, 1000002, 1000003
-        Потом скачивается в папку под этим id и можно будет открывать изображение
-        Будет несколько типов:
-        1. 1000001 - Фильмы (Не будет изменений)
-        2. 2000001 - Сериалы (Возможны изменения)
-        3. 3000001 - Книги (Возможно изменение)
+        на компьютере пользователя
         """
 
         directory_images = listdir("data_images/")
-        data_on_downloaded_images = set(filter(lambda p: p.endswith('.png') and p.startswith("2"), directory_images))
-
-        if id_serial + ".png" in data_on_downloaded_images:
-
-            pixmap = QPixmap(f"data_images/{id_serial}.png")
-            self.image_serial.setPixmap(pixmap)
-
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("S"), directory_images)
+        )
+        print("1")
+        if 'S' + str(id_film) + ".png" in data_on_downloaded_images:
+            print("1")
+            pixmap = QPixmap(f"data_images/S{id_film}.png")
+            self.image_serials.setPixmap(pixmap)
         else:
-
-            data = urllib.request.urlopen(url_name).read()
-
-            f = open(f"data_images/{id_serial}.png", "wb")
+            print(url)
+            data = urllib.request.urlopen(url).read()
+            print("1")
+            f = open(f"data_images/S{str(id_film)}.png", "wb")
             f.write(data)
             f.close()
-
-            pixmap = QPixmap()
-            pixmap.loadFromData(data)
-            self.image_serial.setPixmap(pixmap)
+            pixmap = QPixmap(f"data_images/S{id_film}.png")
+            self.image_serials.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
-    def output_of_serials_by_rating(self):
+    def basic_by_output(self):
 
-        """Вывод сериалов по рейтингу"""
+        """Базовый вывод"""
 
-        self.search_for_data_in_the_database_serials("rating", "DESC")
+        self.search_in_database("rating", "DESC")
 
-    def output_of_serials_by_date(self):
+    def output_by_rating(self):
 
-        """Вывод сериалов по дате релиза"""
+        """Вывод фильмов по рейтингу"""
 
-        self.search_for_data_in_the_database_serials("release", "DESC")
+        self.search_in_database("rating", "DESC")
 
-    def output_of_serials_by_name(self):
+    def output_by_date(self):
 
-        """Вывод сериалов по названию"""
+        """Вывод фильмов по дате релиза"""
 
-        self.search_for_data_in_the_database_serials("serial", "ASC")
+        self.search_in_database("release", "DESC")
 
-    def search_criteria_serials(self):
+    def output_by_name(self):
+
+        """Вывод фильмов по названию"""
+
+        self.search_in_database("serial", "ASC")
+
+    def search_by_criteria(self):
 
         """Сортировка по критериям"""
 
-        self.search_for_data_in_the_database_serials("rating", "DESC")
+        self.search_in_database("rating", "DESC")
 
-    # ------------------------------------------------------------------------------------------------------------------
+    #  -----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def exit():
+    def _exit():
         serial.close()
         ex.show()
+
+    def closeEvent(self, event):
+
+        self.mediaPlayer.pause()
+        self.basic_by_output()
+
+    def keyPressEvent(self, event):
+        """Элементы передвигались в норму"""
+
+        # TODO: Элементы передвигались в норму и увеличивались после увелечинение в фулл окно ->
+        #  Тест функция возможно не будет добавлена
+        if event.key() == Qt.Key_Escape:
+            films.close()
+            ex.show()
+        if event.key() == Qt.Key_F11:
+            if self.isMaximized():
+                self.showNormal()
+            else:
+                self.showMaximized()
 
 
 class BooksComics(QMainWindow):
