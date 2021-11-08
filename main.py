@@ -9,7 +9,6 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QUrl, Qt
 
-
 # TODO: Увеличить базу данных
 # TODO: Улутшить интерфейс программы
 # ----------------------------------------------------------------------------------------------------------------------
@@ -23,10 +22,13 @@ from PyQt5.QtCore import QUrl, Qt
 #  2. Пользователь сам решал что ему выводить первым при базовым выводе
 
 # TODO: Добавить с боку аватарку пользователя и имя и в настройках профиля изменение этого
+
+# TODO: Сделать функцую отображения на разных языках
 # ----------------------------------------------------------------------------------------------------------------------
 
 
 class Main(QMainWindow):
+
     """ Главное окно"""
 
     def __init__(self):
@@ -75,6 +77,7 @@ class Main(QMainWindow):
     @staticmethod
     def film_window():
         films.show()
+        films.gui()
         ex.close()
 
     @staticmethod
@@ -82,12 +85,14 @@ class Main(QMainWindow):
         settings.show()
         ex.close()
 
-
+         
 class Films(QMainWindow):
 
     def __init__(self):
         super().__init__()
         loadUi('ui/film.ui', self)
+
+        self.gui()
 
         # Запоминает названия фильма
 
@@ -100,19 +105,19 @@ class Films(QMainWindow):
 
         self.basic_by_output()
 
-        # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
+    # ---------------------------------------------<Кнопки и интерфейс>-------------------------------------------------
 
         # Все критерии -> Вывод фильмов по критериям
 
         self.checkBox.clicked.connect(self.sort)
-        self.checkBox_2.clicked.connect(self.sort)
         self.checkBox_3.clicked.connect(self.sort)
+        self.checkBox_5.clicked.connect(self.sort)
 
         # Основные критерии -> {Рейтинг, По дате, По названию}
 
-        self.btn_rating_DESC_films.clicked.connect(self.output_by_rating)
-        self.btn_date_DESC_films.clicked.connect(self.output_by_date)
-        self.btn_name_DESC_films.clicked.connect(self.output_by_name)
+        self.btn_rating_output.clicked.connect(self.output_by_rating)
+        self.btn_date_output.clicked.connect(self.output_by_date)
+        self.btn_name_output.clicked.connect(self.output_by_name)
 
         # таблица фильмов
 
@@ -145,6 +150,60 @@ class Films(QMainWindow):
 
         self.mediaPlayer.setVolume(50)
 
+    def gui(self):
+
+        # TODO Добавить в БД базу данных на англиском
+        # TODO: Переименовать категории
+        # TODO: Перенести в другой фаил
+        if Settings.get_language() == "Ru":
+            self.btn_exit_films.setText("<- Назад")
+            self.btn_clear_film_images.setText("Очистить изображения")
+            self.btn_clear_trailers.setText("Удалить трейлеры")
+
+            self.btn_date_output.setText("По дате")
+            self.btn_name_output.setText("По названию")
+            self.btn_rating_output.setText("По рейтингу")
+
+            self.input_search_films.setText("Поиск...")
+
+            self.pushButton.setText("Загрузить трейлер")
+            self.label_2.setText("Громкость")
+
+            self.rating_films.setText("Рейтинг:")
+            self.nation_films.setText("Страна:")
+            self.style_films.setText("Жанры:")
+            self.age_films.setText("Возраст:")
+            self.date_films.setText("Релиз:")
+            self.description.setText("Описание:")
+
+            self.name_film.setText("Фильм")
+
+            self.label.setText("Фильмы")
+        else:
+            self.btn_clear_trailers.setText("Delete trailers")
+            self.btn_clear_film_images.setText("Clear images")
+            self.btn_exit_films.setText("<- back")
+
+            self.btn_date_output.setText("By date")
+            self.btn_name_output.setText("By name")
+            self.btn_rating_output.setText("By rating")
+
+            self.input_search_films.setText("Search...")
+
+            self.pushButton.setText("Download the trailer")
+            self.label_2.setText("Volume")
+
+            self.rating_films.setText("Rating:")
+            self.nation_films.setText("A country:")
+            self.style_films.setText("Genre:")
+            self.age_films.setText("Age:")
+            self.date_films.setText("Release:")
+            self.description.setText("Description")
+
+            self.name_film.setText("Film")
+
+            self.label.setText("Films")
+
     def clear_trailers_confirmation(self):
         """Функция потверждение трейлеров """
 
@@ -165,7 +224,7 @@ class Films(QMainWindow):
         """Функция удаляет установлинные трейлеры"""
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
-            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+            filter(lambda p: p.endswith('.mp4') and p.startswith("F"), directory_videos)
         )
 
         for trailer in data_on_downloaded_videos:
@@ -185,6 +244,7 @@ class Films(QMainWindow):
         url_film_trailer = ''
 
         for value in sql.execute(f"SELECT video, id FROM data_films WHERE film = '{self.name_film_global}'"):
+
             filename = "F" + str(value[1])
             url_film_trailer = value[0]
 
@@ -271,10 +331,12 @@ class Films(QMainWindow):
 
         """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
 
+        criteria = sql.execute(f"SELECT id FROM id_genres WHERE genre = '{self.sender().text().lower()}'").fetchone()[0]
+
         if state:
-            self.data_criteria.add(self.sender().text())
+            self.data_criteria.add(str(criteria))
         else:
-            self.data_criteria.remove(self.sender().text())
+            self.data_criteria.remove(str(criteria))
 
         self.search_by_criteria()
 
@@ -293,12 +355,15 @@ class Films(QMainWindow):
 
         """Вывод фильмов и краткой инфмормации в таблицу"""
 
+        nation = sql.execute(f"SELECT nation FROM id_nations WHERE id = {value[3]}").fetchone()[0].capitalize()
+        genre = sql.execute(f"SELECT genre FROM id_genres WHERE id = {value[5]}").fetchone()[0].capitalize()
+
         self.table_films.addItem(f'{count}. '
                                  f'{value[1]}, '
                                  f'{value[2]}, '
-                                 f'[{value[3]}], '
+                                 f'[{nation}], '
                                  f'({value[4]}), '
-                                 f'{value[5]}, '
+                                 f'{genre}, '
                                  f'{value[6]}')
 
     def checking_search(self):
@@ -350,14 +415,14 @@ class Films(QMainWindow):
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
                      SELECT * FROM data_films
-                     WHERE style in {self.creating_request()}
-                     ORDER BY {sorting} {type_sorting}"""):
+                     WHERE genre in {self.creating_request()}
+                     ORDER BY {sorting} {type_sorting}""").fetchall():
                 self.add_item(value, count)
                 count += 1
         else:
             for value in sql.execute(f"""
                      SELECT * FROM data_films
-                     ORDER BY {sorting} {type_sorting}"""):
+                     ORDER BY {sorting} {type_sorting}""").fetchall():
                 self.add_item(value, count)
                 count += 1
 
@@ -380,16 +445,20 @@ class Films(QMainWindow):
         self.name_film_global = film
 
         for value in sql.execute(f"SELECT * FROM data_films WHERE film = '{film}'"):
+
             # Изображение
             self.downloading_image(value[9], value[0])
 
             # Остальная информация
 
+            nation = sql.execute(f"SELECT nation FROM id_nations WHERE id = {value[3]}").fetchone()[0].capitalize()
+            genre = sql.execute(f"SELECT genre FROM id_genres WHERE id = {value[5]}").fetchone()[0].capitalize()
+
             self.output_rating_films.setText(f'{value[2]}')
             self.output_age_films.setText(f'{value[6]}')
             self.output_date_films.setText(f'{value[4]}')
-            self.output_nation_films.setText(f'{value[3]}')
-            self.output_style_films.setText(f'{value[5]}')
+            self.output_nation_films.setText(f'{nation}')
+            self.output_style_films.setText(f'{genre}')
             self.name_film.setText(f'{value[1]}')
             self.table_description_films.appendPlainText(f'{value[7]}')
 
@@ -418,7 +487,6 @@ class Films(QMainWindow):
         data_on_downloaded_images = set(
             filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
         )
-        print(data_on_downloaded_images)
         for image in data_on_downloaded_images:
             remove(f"data_images/{image}")
 
@@ -588,7 +656,7 @@ class Serials(QMainWindow):
         """Функция удаляет установлинные трейлеры"""
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
-            filter(lambda p: p.endswith('.mp4') and p.startswith("1"), directory_videos)
+            filter(lambda p: p.endswith('.mp4') and p.startswith("S"), directory_videos)
         )
 
         for trailer in data_on_downloaded_videos:
@@ -601,17 +669,17 @@ class Serials(QMainWindow):
 
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
-            filter(lambda p: p.endswith('.mp4') and p.startswith("F"), directory_videos)
+            filter(lambda p: p.endswith('.mp4') and p.startswith("S"), directory_videos)
         )
 
         filename = ''
-        url_film_trailer = ''
+        url_serials_trailer = ''
 
-        for value in sql.execute(f"SELECT video, id FROM data_films WHERE film = '{self.name_film_global}'"):
-            filename = "F" + str(value[1])
-            url_film_trailer = value[0]
+        for value in sql.execute(f"SELECT videos, id FROM data_serials WHERE serial = '{self.name_serials_global}'"):
+            filename = "S" + str(value[1])
+            url_serials_trailer = value[0]
 
-        if self.name_film_global == '':
+        if self.name_serials_global == '':
             QMessageBox.warning(self, "Информация", "Вам нужно выбрать фильм")
 
         elif filename + '.mp4' in data_on_downloaded_videos:
@@ -635,11 +703,11 @@ class Serials(QMainWindow):
 
                     """выводит трейлер с интернета на экран пользователю"""
 
-                    self.download_trailer_yt(url_film_trailer, filename)
+                    self.download_trailer_yt(url_serials_trailer, filename)
                 else:
                     self.ready_for_viewing.setText("Трейлер не скачен")
             else:
-                self.download_trailer_yt(url_film_trailer, filename)
+                self.download_trailer_yt(url_serials_trailer, filename)
 
     def download_trailer_yt(self, url, filename):
 
@@ -740,8 +808,6 @@ class Serials(QMainWindow):
 
         input_search_data = self.input_search_serials.text().strip().capitalize()
 
-        print(input_search_data)
-
         verification_serials = \
             sql.execute(f'SELECT serial FROM data_serials WHERE serial = "{input_search_data}"').fetchone()[0]
         # verification_producer = sql.execute(f'SELECT producer, film FROM data WHERE producer = "{input_search_data}"'
@@ -759,7 +825,6 @@ class Serials(QMainWindow):
             self.output_style_films.setText('')
             self.name_film.setText('')
             self.table_description_serials.appendPlainText('')
-            self.name_serial_global = ''
         else:
             self.information_output(verification_serials)
 
@@ -794,15 +859,15 @@ class Serials(QMainWindow):
         if selected_serial[0] != 'serial':
             self.information_output(selected_serial[0])
 
-    def information_output(self, serial):
+    def information_output(self, serials):
 
         """Функция для подробной информации по выбранному фильму"""
 
         self.table_description_serials.clear()
         self.ready_for_viewing.setText(" ")
-        self.name_serial_global = serial
+        self.name_serials_global = serials
 
-        for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{serial}'"):
+        for value in sql.execute(f"SELECT * FROM data_serials WHERE serial = '{serials}'"):
             # Изображение
             self.downloading_image(value[9], value[0])
 
@@ -841,9 +906,9 @@ class Serials(QMainWindow):
 
         directory_images = listdir("data_images/")
         data_on_downloaded_images = set(
-            filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
+            filter(lambda p: p.endswith('.png') and p.startswith("S"), directory_images)
         )
-        print(data_on_downloaded_images)
+
         for image in data_on_downloaded_images:
             remove(f"data_images/{image}")
 
@@ -858,19 +923,20 @@ class Serials(QMainWindow):
         data_on_downloaded_images = set(
             filter(lambda p: p.endswith('.png') and p.startswith("S"), directory_images)
         )
-        print("1")
-        if 'S' + str(id_film) + ".png" in data_on_downloaded_images:
-            print("1")
-            pixmap = QPixmap(f"data_images/S{id_film}.png")
+        id_film = "S" + str(id_film)
+
+        if id_film + ".png" in data_on_downloaded_images:
+
+            pixmap = QPixmap(f"data_images/{id_film}.png")
             self.image_serials.setPixmap(pixmap)
         else:
-            print(url)
+
             data = urllib.request.urlopen(url).read()
-            print("1")
-            f = open(f"data_images/S{str(id_film)}.png", "wb")
+
+            f = open(f"data_images/{id_film}.png", "wb")
             f.write(data)
             f.close()
-            pixmap = QPixmap(f"data_images/S{id_film}.png")
+            pixmap = QPixmap(f"data_images/{id_film}.png")
             self.image_serials.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
@@ -942,31 +1008,196 @@ class BooksComics(QMainWindow):
 
         self.data_criteria = set()
 
+        self.basic_by_output()
+
+        # Все критерии -> Вывод фильмов по критериям
+
+        self.checkBox.clicked.connect(self.sort)
+        self.checkBox_2.clicked.connect(self.sort)
+        self.checkBox_4.clicked.connect(self.sort)
+        self.checkBox_6.clicked.connect(self.sort)
+        self.checkBox_7.clicked.connect(self.sort)
+        self.checkBox_8.clicked.connect(self.sort)
+        self.checkBox_3.clicked.connect(self.sort)
+        self.checkBox_5.clicked.connect(self.sort)
+
         # Кнопки Основных критерий
 
+        self.table_books.clicked.connect(self.movie_selection)
+
+        self.input_search.returnPressed.connect(self.checking_search)
+
+        self.btn_clear_images.clicked.connect(self.clear_images_confirmation)
         self.btn_date_DESC.clicked.connect(self.output_by_date)
         self.btn_name_DESC.clicked.connect(self.output_by_name)
 
         self.btn_exit.clicked.connect(self.exit)
 
+    def gui(self):
+        """нужна дял смены языка"""
+        # TODO: реальзвоать смену интерфейса
+        pass
+
+    def clear_images_confirmation(self):
+
+        """Подтверждение на удаление"""
+
+        if settings.get_confirmation() == "Вкл":
+            valid = QMessageBox.question(self,
+                                         'Подтверждение',
+                                         'Вы точно хотите удалить изображения?\n'
+                                         '(Функцию потверждение можно убрать в нстройках)',
+                                         QMessageBox.Yes, QMessageBox.No)
+
+            if valid == QMessageBox.Yes:
+                self.clear_images()
+        else:
+            self.clear_images()
+
+    @staticmethod
+    def clear_images():
+
+        """Функция удаляет изображения"""
+
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("B"), directory_images)
+        )
+        for image in data_on_downloaded_images:
+            remove(f"data_images/{image}")
+
+    def downloading_image(self, url, id_book):
+        """
+        Фунцкия для скачивания изображения с интернета и так же она сохраняет изображение с интернета
+        на компьютере пользователя
+        """
+
+        directory_images = listdir("data_images/")
+        data_on_downloaded_images = set(
+            filter(lambda p: p.endswith('.png') and p.startswith("B"), directory_images)
+        )
+
+        id_book = "B" + str(id_book)
+
+        if id_book + ".png" in data_on_downloaded_images:
+            pixmap = QPixmap(f"data_images/{id_book}.png")
+            self.image.setPixmap(pixmap)
+        else:
+            data = urllib.request.urlopen(url).read()
+
+            f = open(f"data_images/{id_book}.png", "wb")
+            f.write(data)
+            f.close()
+
+            pixmap = QPixmap()
+            pixmap.loadFromData(data)
+            self.image.setPixmap(pixmap)
+
+    def checking_search(self):
+        """
+
+        Функция дял проверки запроса на поиск ->
+        Если книга не найден то фукция убирает все и пишет "книга не найден".
+        Если найдена книга то выводтся подробная информация.
+
+        """
+
+        input_search_data = self.input_search.text().strip().split()
+
+        book = " ".join(input_search_data[:len(input_search_data) - 1])
+        tom = input_search_data[-1]
+
+        verification_film = sql.execute(f'SELECT book, toms FROM data_books WHERE book = "{book}" and toms = {tom}'
+                                        ).fetchmany(2)
+        if verification_film is None:
+            self.image.setText("Книга не найдена....")
+            self.table_description.clear()
+            self.output_rating.setText('')
+            self.output_age.setText('')
+            self.output_date.setText('')
+            self.output_nation.setText('')
+            self.output_style.setText('')
+            self.name.setText('')
+            self.table_description.appendPlainText('')
+        else:
+            self.information_output(verification_film[0], verification_film[1])
+
+    def movie_selection(self):
+
+        """Получаем выбранный фильм и редактируем под запрос"""
+
+        selected_movie = self.table_books.currentItem().text()[3:].strip().split(", ")
+        # TODO: потом изменить игнорируешься название
+        if selected_movie[0] != 'aisasdahsdasduhadhuiopuhasduh':
+            self.information_output(selected_movie[0], selected_movie[4])
+
+    def information_output(self, book, tom):
+
+        """Функция для подробной информации по выбранному фильму"""
+
+        self.table_description.clear()
+
+        # TODO: Нужно переделать фотографии
+        for value in sql.execute(f"SELECT * FROM data_books WHERE book = '{book}' and toms = {tom}"):
+            # Изображение
+            self.downloading_image(value[7], value[0])
+
+            # Остальная информация
+
+            author = sql.execute(f"SELECT author FROM id_authors WHERE id = {value[3]}").fetchone()[0].capitalize()
+            genre = sql.execute(f"SELECT genre FROM id_genres_books WHERE id = {value[4]}").fetchone()[0].capitalize()
+
+            self.output_rating.setText(f'{value[2]}')
+            self.output_age.setText(f'{value[6]}')
+            self.output_date.setText(f'{value[4]}')
+            self.output_nation.setText(f'{author}')
+            self.output_style.setText(f'{genre}')
+            self.name.setText(f'{value[1]}')
+            self.table_description.appendPlainText(f'{value[7]}')
+
+    def creating_request(self):
+
+        """
+            создания запроса в БД
+
+            Входные данные : Множество жанров -> {"Фантастика", "Ужасы"}
+            Возращает запрос в базу данных -> ("Фантастика", "Ужасы")
+        """
+
+        return f'''('{"', '".join(self.data_criteria)}')'''
+
+    def sort(self, state):
+        """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
+
+        criteria = sql.execute(f"SELECT id FROM id_genres_books WHERE genre = '{self.sender().text().lower()}'"
+                               ).fetchone()[0]
+
+        if state:
+            self.data_criteria.add(str(criteria))
+        else:
+            self.data_criteria.remove(str(criteria))
+
+        self.output_by_sort_criteria()
+
     def add_item(self, value, count):
 
         """Вывод фильмов и краткой инфмормации в таблицу"""
 
-        self.table_books.addItem(count,
-                                 value[0],
-                                 value[1],
-                                 value[2],
-                                 value[3],
-                                 value[4],
-                                 value[5],
-                                 value[6],
-                                 value[7],
-                                 value[8])
+        author = sql.execute(f"SELECT author FROM id_authors WHERE id = '{value[3]}'").fetchone()[0]
+        genre = sql.execute(f"SELECT genre FROM id_genres_books WHERE id = '{value[4]}'").fetchone()[0].capitalize()
+
+        self.table_books.addItem(f'{count}. '
+                                 f'{value[1]}, '
+                                 f'{value[2]}, '
+                                 f'{author}, '
+                                 f'{genre}, '
+                                 f'{value[5]}')
 
     def order_output_from_the_database(self):
         """Заголовок в котором показан порядок вывода информации"""
-        pass
+
+        # TODO: СЕДЛАТЬ ЗАГОЛОВОК
+        self.table_books.addItem("aisasdahsdasduhadhuiopuhasduh")
 
     def search_in_database(self, sorting, type_sorting):
 
@@ -977,37 +1208,39 @@ class BooksComics(QMainWindow):
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                     SELECT * FROM data_serials
-                     WHERE style in {self.creating_request()}
-                     ORDER BY {sorting} {type_sorting}"""):
+                     SELECT * FROM data_books
+                     WHERE genre in {self.creating_request()}
+                     ORDER BY {sorting} {type_sorting}""").fetchall():
                 self.add_item(value, count)
                 count += 1
         else:
-            for value in sql.execute(f"""
-                     SELECT * FROM data_books
-                     ORDER BY {sorting} {type_sorting}"""):
+            for value in sql.execute(f"SELECT * FROM data_books ORDER BY {sorting} {type_sorting}").fetchall():
                 self.add_item(value, count)
                 count += 1
 
     def basic_by_output(self):
 
         """Базовый вывод"""
-        pass
+
+        self.search_in_database("release", "DESC")
 
     def output_by_date(self):
 
         """Вывод книг по дате"""
-        pass
+
+        self.search_in_database("release", "DESC")
 
     def output_by_name(self):
 
         """вывод книг по названию"""
-        pass
 
-    def output_bu_sort_criteria(self):
+        self.search_in_database("book", "ASC")
+
+    def output_by_sort_criteria(self):
 
         """Вывод книги по нажатию на жанр"""
-        pass
+
+        self.search_in_database("release", "DESC")
 
     @staticmethod
     def exit():
@@ -1022,8 +1255,11 @@ class Settings(QMainWindow):
         loadUi('ui/settings.ui', self)
 
         self.add_confirmation_item()
+        self.add_language_item()
+
         self.btn_exit.clicked.connect(self.exit)
         self.confirmation.currentTextChanged.connect(self.set_confirmation)
+        self.language.currentTextChanged.connect(self.set_language)
         self.btn_clear_all_images.clicked.connect(self.clear_all_images_confirmation)
         self.btn_clear_all_trailers.clicked.connect(self.clear_all_trailers_confirmation)
 
@@ -1078,21 +1314,39 @@ class Settings(QMainWindow):
                 remove(f"data_videos/{video}")
 
     def add_confirmation_item(self):
-        if sql.execute("""SELECT confirmation FROM user""").fetchone()[0] == "Вкл":
+        if sql.execute("SELECT confirmation FROM user").fetchone()[0] == "Вкл":
             self.confirmation.addItem("Вкл")
             self.confirmation.addItem("Выкл")
         else:
             self.confirmation.addItem("Выкл")
             self.confirmation.addItem("Вкл")
 
+    def add_language_item(self):
+        if sql.execute("SELECT language FROM user").fetchone()[0] == "Ru":
+            self.language.addItem("Ru")
+            self.language.addItem("Eng")
+        else:
+            self.language.addItem("Eng")
+            self.language.addItem("Ru")
+
+    @staticmethod
+    def set_language(text):
+        print(text)
+        sql.execute(f"UPDATE user SET language = '{text}' WHERE id = 1")
+        db.commit()
+
+    @staticmethod
+    def get_language():
+        return sql.execute("SELECT language FROM user").fetchone()[0]
+
     @staticmethod
     def set_confirmation(text):
-        sql.execute(f"""UPDATE user SET confirmation = '{text}' WHERE id = 1""")
+        sql.execute(f"UPDATE user SET confirmation = '{text}' WHERE id = 1")
         db.commit()
 
     @staticmethod
     def get_confirmation():
-        return sql.execute("""SELECT confirmation FROM user""").fetchone()[0]
+        return sql.execute("SELECT confirmation FROM user").fetchone()[0]
 
     @staticmethod
     def exit():
