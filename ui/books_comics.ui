@@ -9,15 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
-    <height>1080</height>
+    <width>831</width>
+    <height>1013</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background:rgb(255, 170, 255)</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="btn_date_DESC">
@@ -28,6 +28,9 @@
       <width>71</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>По дате</string>
@@ -42,6 +45,9 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
     <property name="text">
      <string>По названию</string>
     </property>
@@ -54,6 +60,9 @@
       <width>75</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>Назад</string>
@@ -78,8 +87,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 3px solid white;
-border-color: rgb(119, 143, 81);</string>
+      <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
      </property>
      <property name="text">
       <string/>
@@ -286,7 +294,7 @@ border-color: rgb(119, 143, 81);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -336,17 +344,15 @@ border-color: rgb(119, 143, 81);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-border-radius: 15px; border: 3px solid white;
-border-color: rgb(119, 143, 81);</string>
+     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
     </property>
     <widget class="QWidget" name="categoriesPage1">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>489</width>
-       <height>115</height>
+       <width>501</width>
+       <height>127</height>
       </rect>
      </property>
      <attribute name="label">
@@ -358,35 +364,129 @@ border-color: rgb(119, 143, 81);</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>489</width>
-       <height>115</height>
+       <width>501</width>
+       <height>127</height>
       </rect>
      </property>
      <attribute name="label">
       <string/>
      </attribute>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>0</y>
+        <width>491</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="categories_3">
+       <item>
+        <widget class="QCheckBox" name="checkBox_6">
+         <property name="text">
+          <string>Фантастика</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_7">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_8">
+         <property name="text">
+          <string>Мультфильмы</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_9">
+         <property name="text">
+          <string>Ужасы</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_10">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
    <widget class="QListWidget" name="table_books">
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>270</y>
+      <y>280</y>
       <width>501</width>
-      <height>741</height>
+      <height>731</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
+    </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>-10</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Книги</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="bg">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1421</width>
+      <height>1031</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(255, 131, 171, 255), stop:1 rgba(255, 255, 255, 255))</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>bg</zorder>
+   <zorder>btn_date_DESC</zorder>
+   <zorder>btn_name_DESC</zorder>
+   <zorder>btn_exit</zorder>
+   <zorder>widget</zorder>
+   <zorder>table_description</zorder>
+   <zorder>input_search</zorder>
+   <zorder>categories</zorder>
+   <zorder>table_books</zorder>
+   <zorder>label</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>841</width>
+     <width>831</width>
      <height>21</height>
     </rect>
    </property>
