@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>842</width>
     <height>976</height>
    </rect>
   </property>
@@ -14,7 +14,8 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">selection-background-color:  qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(86, 151, 198, 255), stop:1 rgba(255, 255, 255, 255))</string>
+   <string notr="true">background-color: rgb(172, 195, 139);;
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -24,7 +25,7 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>-10</y>
+      <y>0</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -47,9 +48,6 @@
       <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
      <string>Назад</string>
     </property>
@@ -68,7 +66,7 @@
       <widget class="QPushButton" name="btn_date_output">
        <property name="styleSheet">
         <string notr="true">border-radius: 15px; border: 3px solid white;
-border-color: rgb(225, 225, 225);
+border-color:rgb(119, 143, 81);
 </string>
        </property>
        <property name="text">
@@ -80,7 +78,7 @@ border-color: rgb(225, 225, 225);
       <widget class="QPushButton" name="btn_name_output">
        <property name="styleSheet">
         <string notr="true">border-radius: 15px; border: 3px solid white;
-border-color: rgb(225, 225, 225);</string>
+border-color: rgb(119, 143, 81);</string>
        </property>
        <property name="text">
         <string>По названию</string>
@@ -91,7 +89,7 @@ border-color: rgb(225, 225, 225);</string>
       <widget class="QPushButton" name="btn_rating_output">
        <property name="styleSheet">
         <string notr="true">border-radius: 15px; border: 3px solid white;
-border-color: rgb(225, 225, 225);
+border-color: rgb(119, 143, 81);
 </string>
        </property>
        <property name="text">
@@ -105,27 +103,22 @@ border-color: rgb(225, 225, 225);
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>600</y>
+      <y>590</y>
       <width>501</width>
-      <height>381</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
      <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">
-background-color: rgba(86, 151, 198, 255)
-</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="table_description_films">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>740</y>
+      <y>730</y>
       <width>321</width>
-      <height>291</height>
+      <height>301</height>
      </rect>
     </property>
     <property name="font">
@@ -134,8 +127,7 @@ background-color: rgba(86, 151, 198, 255)
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-background-color: rgba(86, 151, 198, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -151,15 +143,17 @@ background-color: rgba(86, 151, 198, 255)</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(86, 151, 198, 255)</string>
+     <string notr="true">
+border-radius: 15px; border: 3px solid white;
+border-color: rgb(119, 143, 81);</string>
     </property>
     <widget class="QWidget" name="categoriesPage1">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>501</width>
-       <height>127</height>
+       <width>489</width>
+       <height>115</height>
       </rect>
      </property>
      <attribute name="label">
@@ -171,8 +165,8 @@ background-color: rgba(86, 151, 198, 255)</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>501</width>
-       <height>127</height>
+       <width>489</width>
+       <height>115</height>
       </rect>
      </property>
      <attribute name="label">
@@ -193,35 +187,21 @@ background-color: rgba(86, 151, 198, 255)</string>
          <item>
           <widget class="QCheckBox" name="checkBox">
            <property name="text">
-            <string>Фантастика</string>
+            <string>Боевик</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_5">
            <property name="text">
-            <string>CheckBox</string>
+            <string>Фэнтези</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_3">
            <property name="text">
-            <string>Мультфильмы</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_2">
-           <property name="text">
-            <string>Ужасы</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_4">
-           <property name="text">
-            <string>CheckBox</string>
+            <string>Драма</string>
            </property>
           </widget>
          </item>
@@ -235,9 +215,9 @@ background-color: rgba(86, 151, 198, 255)</string>
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>30</y>
+      <y>40</y>
       <width>481</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -269,23 +249,23 @@ background-color: rgba(86, 151, 198, 255)</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
+      <y>70</y>
       <width>321</width>
-      <height>641</height>
+      <height>671</height>
      </rect>
     </property>
     <widget class="QLabel" name="image_films">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>30</y>
        <width>301</width>
        <height>441</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">
-background-color: rgba(86, 151, 198, 255)</string>
+      <string notr="true">border: 3px solid white;
+border-color: rgb(119, 143, 81);</string>
      </property>
      <property name="text">
       <string/>
@@ -391,12 +371,26 @@ background-color: rgba(86, 151, 198, 255)</string>
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Режиссер:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="verticalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>70</x>
+       <x>80</x>
        <y>470</y>
        <width>141</width>
        <height>141</height>
@@ -456,6 +450,13 @@ background-color: rgba(86, 151, 198, 255)</string>
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="output_reg">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QLabel" name="name_film">
@@ -464,7 +465,7 @@ background-color: rgba(86, 151, 198, 255)</string>
        <x>10</x>
        <y>0</y>
        <width>281</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -486,9 +487,6 @@ background-color: rgba(86, 151, 198, 255)</string>
       <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
      <string>Очистить Изображения</string>
     </property>
@@ -505,8 +503,7 @@ background-color: rgba(86, 151, 198, 255)</string>
     <property name="styleSheet">
      <string notr="true">border-radius: 10px; 
 border: 3px solid white;
-border-color: rgb(225, 225, 225);
-background-color: rgba(86, 151, 198, 255)</string>
+border-color: rgb(119, 143, 81);</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -530,9 +527,6 @@ background-color: rgba(86, 151, 198, 255)</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgba(86, 151, 198, 255)</string>
-       </property>
        <property name="text">
         <string>Загрузить Трейлер</string>
        </property>
@@ -545,9 +539,6 @@ background-color: rgba(86, 151, 198, 255)</string>
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgba(86, 151, 198, 255)</string>
        </property>
        <property name="text">
         <string/>
@@ -616,8 +607,8 @@ background-color: rgba(86, 151, 198, 255)</string>
    <widget class="QLabel" name="ready_for_viewing">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>80</y>
+      <x>400</x>
+      <y>70</y>
       <width>511</width>
       <height>21</height>
      </rect>
@@ -642,50 +633,17 @@ background-color: rgba(86, 151, 198, 255)</string>
       <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
      <string>Очистить трейлеры</string>
     </property>
    </widget>
-   <widget class="QLabel" name="bg">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>-8</y>
-      <width>901</width>
-      <height>961</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(86, 151, 198, 255), stop:1 rgba(255, 255, 255, 255))</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <zorder>bg</zorder>
-   <zorder>label</zorder>
-   <zorder>btn_exit_films</zorder>
-   <zorder>horizontalLayoutWidget</zorder>
-   <zorder>table_films</zorder>
-   <zorder>table_description_films</zorder>
-   <zorder>categories</zorder>
-   <zorder>input_search_films</zorder>
-   <zorder>widget</zorder>
-   <zorder>btn_clear_film_images</zorder>
-   <zorder>widget_film_trailer</zorder>
-   <zorder>layoutWidget</zorder>
-   <zorder>ready_for_viewing</zorder>
-   <zorder>btn_clear_trailers</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>841</width>
+     <width>842</width>
      <height>21</height>
     </rect>
    </property>

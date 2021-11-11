@@ -9,15 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>1013</height>
+    <width>1006</width>
+    <height>974</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background:rgb(255, 170, 255)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="btn_date_DESC">
@@ -28,9 +28,6 @@
       <width>71</width>
       <height>23</height>
      </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>По дате</string>
@@ -45,9 +42,6 @@
       <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
      <string>По названию</string>
     </property>
@@ -61,231 +55,17 @@
       <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
      <string>Назад</string>
     </property>
-   </widget>
-   <widget class="QWidget" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>80</y>
-      <width>321</width>
-      <height>641</height>
-     </rect>
-    </property>
-    <widget class="QLabel" name="image">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>291</width>
-       <height>431</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="description">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>620</y>
-       <width>71</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Описание:</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>470</y>
-       <width>105</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="requests">
-      <item>
-       <widget class="QLabel" name="rating">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Рейтинг: </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="nation">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Страна:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="style">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Жанры:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="age">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Возраст:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="date">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Релиз: </string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_5">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>470</y>
-       <width>141</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="output">
-      <property name="rightMargin">
-       <number>9</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="output_rating">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="output_nation">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="output_style">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="output_age">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="output_date">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QLabel" name="name">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>281</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Фильм</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QPlainTextEdit" name="table_description">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>730</y>
-      <width>321</width>
-      <height>291</height>
+      <y>840</y>
+      <width>451</width>
+      <height>251</height>
      </rect>
     </property>
     <property name="font">
@@ -294,7 +74,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
+     <string notr="true"/>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -303,8 +83,8 @@
    <widget class="QLineEdit" name="input_search">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>10</y>
+      <x>650</x>
+      <y>20</y>
       <width>331</width>
       <height>31</height>
      </rect>
@@ -337,22 +117,24 @@
    <widget class="QToolBox" name="categories">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>90</y>
-      <width>501</width>
+      <x>490</x>
+      <y>270</y>
+      <width>491</width>
       <height>181</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
+     <string notr="true">
+border-radius: 15px; border: 3px solid white;
+border-color: rgb(119, 143, 81);</string>
     </property>
     <widget class="QWidget" name="categoriesPage1">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>501</width>
-       <height>127</height>
+       <width>479</width>
+       <height>115</height>
       </rect>
      </property>
      <attribute name="label">
@@ -364,8 +146,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>501</width>
-       <height>127</height>
+       <width>479</width>
+       <height>115</height>
       </rect>
      </property>
      <attribute name="label">
@@ -374,119 +156,326 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>1</x>
-        <y>0</y>
-        <width>491</width>
-        <height>111</height>
+        <x>0</x>
+        <y>20</y>
+        <width>391</width>
+        <height>21</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="categories_3">
+      <layout class="QHBoxLayout" name="categories_2">
        <item>
-        <widget class="QCheckBox" name="checkBox_6">
+        <widget class="QCheckBox" name="checkBox">
          <property name="text">
-          <string>Фантастика</string>
+          <string>Образование</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_7">
+        <widget class="QCheckBox" name="checkBox_5">
          <property name="text">
-          <string>CheckBox</string>
+          <string>Машинное обучение</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_8">
+        <widget class="QCheckBox" name="checkBox_3">
          <property name="text">
-          <string>Мультфильмы</string>
+          <string>Боевик</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_9">
+        <widget class="QCheckBox" name="checkBox_2">
          <property name="text">
-          <string>Ужасы</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_10">
-         <property name="text">
-          <string>CheckBox</string>
+          <string>Детектив</string>
          </property>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>50</y>
+        <width>131</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Программирование</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_6">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>50</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Математика</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>70</y>
+        <width>171</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Базы и банки данных. СУБД</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_8">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>50</y>
+        <width>70</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Манга</string>
+      </property>
      </widget>
     </widget>
    </widget>
    <widget class="QListWidget" name="table_books">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>280</y>
+      <x>490</x>
+      <y>460</y>
       <width>501</width>
-      <height>731</height>
+      <height>631</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+   </widget>
+   <widget class="QLabel" name="image">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>471</width>
+      <height>681</height>
+     </rect>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
+     <string notr="true">
+border-color: rgb(119, 143, 81);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="name">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>281</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Фильм</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>110</y>
+      <width>105</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="requests">
+     <item>
+      <widget class="QLabel" name="rating">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Релиз:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="nation">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Страна:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="style">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Жанр:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="date">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Том:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>110</y>
+      <width>141</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="output">
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="output_rating">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="output_nation">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="output_style">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="output_date">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="description">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>810</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Описание:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>-10</y>
+      <x>380</x>
+      <y>10</y>
       <width>161</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>30</pointsize>
+      <pointsize>34</pointsize>
      </font>
     </property>
     <property name="text">
      <string>Книги</string>
     </property>
    </widget>
-   <widget class="QLabel" name="bg">
+   <widget class="QPushButton" name="btn_clear_images">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>1421</width>
-      <height>1031</height>
+      <x>80</x>
+      <y>10</y>
+      <width>141</width>
+      <height>23</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(255, 131, 171, 255), stop:1 rgba(255, 255, 255, 255))</string>
-    </property>
     <property name="text">
-     <string/>
+     <string>Удалить изображения</string>
     </property>
    </widget>
-   <zorder>bg</zorder>
-   <zorder>btn_date_DESC</zorder>
-   <zorder>btn_name_DESC</zorder>
-   <zorder>btn_exit</zorder>
-   <zorder>widget</zorder>
-   <zorder>table_description</zorder>
-   <zorder>input_search</zorder>
-   <zorder>categories</zorder>
-   <zorder>table_books</zorder>
-   <zorder>label</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>831</width>
+     <width>1006</width>
      <height>21</height>
     </rect>
    </property>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
-    <height>600</height>
+    <width>845</width>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,38 +19,23 @@
      <rect>
       <x>0</x>
       <y>100</y>
-      <width>41</width>
+      <width>181</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Язык</string>
+     <string>Язык(ТЕСТ функция не доделана)</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="language_list">
+   <widget class="QComboBox" name="language">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>190</x>
       <y>100</y>
       <width>69</width>
       <height>22</height>
      </rect>
     </property>
-    <item>
-     <property name="text">
-      <string>-</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>RU</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>ENG</string>
-     </property>
-    </item>
    </widget>
    <widget class="QPushButton" name="btn_exit">
     <property name="geometry">
@@ -81,7 +66,7 @@
    <widget class="QComboBox" name="confirmation">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>190</x>
       <y>130</y>
       <width>69</width>
       <height>22</height>
@@ -91,8 +76,8 @@
    <widget class="QPushButton" name="btn_clear_all_trailers">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>60</y>
+      <x>710</x>
+      <y>40</y>
       <width>131</width>
       <height>23</height>
      </rect>
@@ -104,8 +89,8 @@
    <widget class="QPushButton" name="btn_clear_all_images">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>30</y>
+      <x>710</x>
+      <y>10</y>
       <width>131</width>
       <height>23</height>
      </rect>
@@ -120,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>799</width>
+     <width>845</width>
      <height>21</height>
     </rect>
    </property>
