@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>1007</height>
+    <width>982</width>
+    <height>1051</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,8 +73,8 @@
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>371</width>
-      <height>631</height>
+      <width>481</width>
+      <height>701</height>
      </rect>
     </property>
     <widget class="QLabel" name="image">
@@ -82,12 +82,12 @@
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>361</width>
-       <height>541</height>
+       <width>471</width>
+       <height>631</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 131, 171, 255);</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string/>
@@ -96,8 +96,8 @@
     <widget class="QLabel" name="description">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>600</y>
+       <x>0</x>
+       <y>670</y>
        <width>71</width>
        <height>20</height>
       </rect>
@@ -118,13 +118,13 @@
       <rect>
        <x>10</x>
        <y>0</y>
-       <width>281</width>
+       <width>371</width>
        <height>31</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>9</pointsize>
       </font>
      </property>
      <property name="text">
@@ -136,9 +136,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>710</y>
-      <width>371</width>
-      <height>291</height>
+      <y>780</y>
+      <width>481</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -190,9 +190,9 @@
    <widget class="QToolBox" name="categories">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>490</x>
       <y>230</y>
-      <width>461</width>
+      <width>491</width>
       <height>181</height>
      </rect>
     </property>
@@ -204,7 +204,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>461</width>
+       <width>421</width>
        <height>127</height>
       </rect>
      </property>
@@ -217,7 +217,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>461</width>
+       <width>491</width>
        <height>127</height>
       </rect>
      </property>
@@ -227,45 +227,78 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>0</y>
+        <x>0</x>
+        <y>-10</y>
         <width>491</width>
-        <height>111</height>
+        <height>51</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="categories_3">
        <item>
         <widget class="QCheckBox" name="checkBox_6">
          <property name="text">
-          <string>Фантастика</string>
+          <string>Образование</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_7">
          <property name="text">
-          <string>CheckBox</string>
+          <string>Машинное обучение</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_8">
          <property name="text">
-          <string>Мультфильмы</string>
+          <string>Боевик</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_9">
          <property name="text">
-          <string>Ужасы</string>
+          <string>Детектив</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>491</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="categories_4">
+       <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>Манга</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_10">
          <property name="text">
-          <string>CheckBox</string>
+          <string>Программирование</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_11">
+         <property name="text">
+          <string>Математика</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_12">
+         <property name="text">
+          <string>Базы и банки данных. субд</string>
          </property>
         </widget>
        </item>
@@ -276,9 +309,9 @@
    <widget class="QListWidget" name="table_books">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>410</y>
-      <width>461</width>
+      <x>490</x>
+      <y>420</y>
+      <width>491</width>
       <height>591</height>
      </rect>
     </property>
@@ -292,8 +325,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>700</x>
-      <y>0</y>
+      <x>740</x>
+      <y>10</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -342,8 +375,8 @@
    <widget class="QWidget" name="verticalLayoutWidget_5">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>80</y>
+      <x>540</x>
+      <y>90</y>
       <width>141</width>
       <height>141</height>
      </rect>
@@ -353,17 +386,7 @@
       <number>9</number>
      </property>
      <item>
-      <widget class="QLabel" name="output_rating">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="output_nation">
+      <widget class="QLabel" name="output_author">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -383,7 +406,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_age">
+      <widget class="QLabel" name="output_date">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -393,7 +416,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="output_date">
+      <widget class="QLabel" name="output_tom">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -407,8 +430,8 @@
    <widget class="QWidget" name="verticalLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>80</y>
+      <x>490</x>
+      <y>90</y>
       <width>105</width>
       <height>141</height>
      </rect>
@@ -424,21 +447,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Рейтинг: </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="nation">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Страна:</string>
+        <string>Автор:</string>
        </property>
       </widget>
      </item>
@@ -452,21 +461,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Жанры:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="age">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Возраст:</string>
+        <string>Жанр:</string>
        </property>
       </widget>
      </item>
@@ -481,6 +476,20 @@
        </property>
        <property name="text">
         <string>Релиз: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="date_2">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Том:</string>
        </property>
       </widget>
      </item>
@@ -505,7 +514,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>842</width>
+     <width>982</width>
      <height>21</height>
     </rect>
    </property>

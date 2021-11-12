@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>957</width>
     <height>976</height>
    </rect>
   </property>
@@ -104,10 +104,10 @@ border-color: rgb(225, 225, 225);
    <widget class="QListWidget" name="table_films">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>600</y>
+      <x>330</x>
+      <y>510</y>
       <width>501</width>
-      <height>381</height>
+      <height>471</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
@@ -140,96 +140,6 @@ background-color: rgba(86, 151, 198, 255)</string>
     <property name="readOnly">
      <bool>true</bool>
     </property>
-   </widget>
-   <widget class="QToolBox" name="categories">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>410</y>
-      <width>501</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgba(86, 151, 198, 255)</string>
-    </property>
-    <widget class="QWidget" name="categoriesPage1">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>501</width>
-       <height>127</height>
-      </rect>
-     </property>
-     <attribute name="label">
-      <string/>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="categoriesPage2">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>100</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <attribute name="label">
-      <string/>
-     </attribute>
-     <widget class="QWidget" name="verticalLayoutWidget_3">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>531</width>
-        <height>161</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QHBoxLayout" name="categories_2">
-         <item>
-          <widget class="QCheckBox" name="checkBox">
-           <property name="text">
-            <string>Фантастика</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_5">
-           <property name="text">
-            <string>CheckBox</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_3">
-           <property name="text">
-            <string>Мультфильмы</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_2">
-           <property name="text">
-            <string>Ужасы</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_4">
-           <property name="text">
-            <string>CheckBox</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
    </widget>
    <widget class="QLineEdit" name="input_search_films">
     <property name="geometry">
@@ -535,7 +445,7 @@ background-color: rgba(86, 151, 198, 255)</string>
      <rect>
       <x>340</x>
       <y>380</y>
-      <width>501</width>
+      <width>491</width>
       <height>25</height>
      </rect>
     </property>
@@ -686,13 +596,117 @@ background-color: rgba(86, 151, 198, 255)</string>
      <string/>
     </property>
    </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>410</y>
+      <width>501</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="categories_3">
+     <item>
+      <widget class="QCheckBox" name="checkBox_6">
+       <property name="text">
+        <string>Детектив</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_7">
+       <property name="text">
+        <string>Комедия</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_8">
+       <property name="text">
+        <string>Криминал</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_9">
+       <property name="text">
+        <string>Фантастика</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>480</y>
+      <width>95</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Боевик</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_5">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>480</y>
+      <width>120</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Фэнтези</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_3">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>480</y>
+      <width>162</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Драма</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_2">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>480</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Триллер</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_4">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>480</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Мультфильм</string>
+    </property>
+   </widget>
    <zorder>bg</zorder>
    <zorder>label</zorder>
    <zorder>btn_exit_films</zorder>
    <zorder>horizontalLayoutWidget</zorder>
    <zorder>table_films</zorder>
    <zorder>table_description_films</zorder>
-   <zorder>categories</zorder>
    <zorder>input_search_films</zorder>
    <zorder>widget</zorder>
    <zorder>btn_clear_film_images</zorder>
@@ -700,13 +714,19 @@ background-color: rgba(86, 151, 198, 255)</string>
    <zorder>layoutWidget</zorder>
    <zorder>ready_for_viewing</zorder>
    <zorder>btn_clear_trailers</zorder>
+   <zorder>layoutWidget_2</zorder>
+   <zorder>checkBox</zorder>
+   <zorder>checkBox_5</zorder>
+   <zorder>checkBox_3</zorder>
+   <zorder>checkBox_2</zorder>
+   <zorder>checkBox_4</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>841</width>
+     <width>957</width>
      <height>21</height>
     </rect>
    </property>

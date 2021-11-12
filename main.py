@@ -1,5 +1,6 @@
 import urllib.request
 from os import remove, listdir
+import pytube
 from pytube import YouTube
 import sys
 from PyQt5.uic import loadUi
@@ -96,9 +97,15 @@ class Films(QMainWindow):
 
         # Все критерии -> Вывод фильмов по критериям
 
-        self.checkBox.clicked.connect(self.sort)
-        self.checkBox_3.clicked.connect(self.sort)
+        self.checkBox_9.clicked.connect(self.sort)
+        self.checkBox_8.clicked.connect(self.sort)
+        self.checkBox_7.clicked.connect(self.sort)
+        self.checkBox_6.clicked.connect(self.sort)
         self.checkBox_5.clicked.connect(self.sort)
+        self.checkBox_4.clicked.connect(self.sort)
+        self.checkBox_3.clicked.connect(self.sort)
+        self.checkBox_2.clicked.connect(self.sort)
+        self.checkBox.clicked.connect(self.sort)
 
         # Основные критерии -> {Рейтинг, По дате, По названию}
 
@@ -206,8 +213,7 @@ class Films(QMainWindow):
         else:
             self.clear_trailers()
 
-    @staticmethod
-    def clear_trailers():
+    def clear_trailers(self):
         """Функция удаляет установлинные трейлеры"""
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
@@ -215,7 +221,12 @@ class Films(QMainWindow):
         )
 
         for trailer in data_on_downloaded_videos:
-            remove(f"data_videos/{trailer}")
+            try:
+                remove(f"data_videos/{trailer}")
+            except PermissionError:
+                QMessageBox.warning(self, "Информация",
+                                    "Трейлер нельзя удалить изи за того что занят другим процессом\n"
+                                    "Для решение проблемы выдете с приложения и зайдите")
 
     def download_trailer(self):
         """Загрузка трейлера"""
@@ -268,14 +279,18 @@ class Films(QMainWindow):
     def download_trailer_yt(self, url, filename):
 
         """Скачивает и выводит на экран трейлер"""
+        try:
+            yt = YouTube(url)
+            yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
+            yt.download("data_videos", filename + '.mp4')
 
-        yt = YouTube(url)
-        yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
-        yt.download("data_videos", filename + '.mp4')
-
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
-        self.pushButton_2.setEnabled(True)
-        self.ready_for_viewing.setText("Трейлер готов к запуску")
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+            self.pushButton_2.setEnabled(True)
+            self.ready_for_viewing.setText("Трейлер готов к запуску")
+        except TypeError:
+            QMessageBox.warning(self, "Информация", "Извените при попытке найти трейлер произошла ошибка")
+        except pytube.exceptions.RegexMatchError:
+            QMessageBox.warning(self, "Информация", "Извените при попытке найти трейлер произошла ошибка")
 
     def play(self):
 
@@ -426,7 +441,7 @@ class Films(QMainWindow):
 
         selected_movie = self.table_films.currentItem().text()[3:].split(", ")
         if selected_movie[0] != 'film':
-            self.information_output(selected_movie[0])
+            self.information_output(selected_movie[0].strip())
 
     def information_output(self, film):
 
@@ -458,9 +473,6 @@ class Films(QMainWindow):
             self.downloading_image(value[9], value[0])
 
             # Остальная информация
-
-            # nation = sql.execute(f"SELECT nation FROM id_nations WHERE id = {value[3]}").fetchone()[0].capitalize()
-            # genre = sql.execute(f"SELECT genre FROM id_genres WHERE id = {value[5]}").fetchone()[0].capitalize()
 
             self.output_rating_films.setText(f'{value[2]}')
             self.output_age_films.setText(f'{value[6]}+')
@@ -511,19 +523,34 @@ class Films(QMainWindow):
             filter(lambda p: p.endswith('.png') and p.startswith("F"), directory_images)
         )
 
-        if 'F' + str(id_film) + ".png" in data_on_downloaded_images:
-            pixmap = QPixmap(f"data_images/F{id_film}.png")
+        id_film = "F" + str(id_film)
+
+        if id_film + ".png" in data_on_downloaded_images:
+            pixmap = QPixmap(f"data_images/{id_film}.png")
             self.image_films.setPixmap(pixmap)
         else:
-            data = urllib.request.urlopen(url).read()
+            try:
+                data = urllib.request.urlopen(url).read()
 
-            f = open(f"data_images/F{str(id_film)}.png", "wb")
-            f.write(data)
-            f.close()
+                f = open(f"data_images/{id_film}.png", "wb")
+                f.write(data)
+                f.close()
 
-            pixmap = QPixmap()
-            pixmap.loadFromData(data)
-            self.image_films.setPixmap(pixmap)
+                pixmap = QPixmap()
+                pixmap.loadFromData(data)
+                self.image_films.setPixmap(pixmap)
+            except AttributeError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_films.setPixmap(pixmap)
+            except ValueError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_films.setPixmap(pixmap)
+            except urllib.error.HTTPError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_films.setPixmap(pixmap)
+            except urllib.error.URLError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_films.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
@@ -593,6 +620,12 @@ class Serials(QMainWindow):
         self.checkBox.clicked.connect(self.sort)
         self.checkBox_2.clicked.connect(self.sort)
         self.checkBox_3.clicked.connect(self.sort)
+        self.checkBox_4.clicked.connect(self.sort)
+        self.checkBox_5.clicked.connect(self.sort)
+        self.checkBox_6.clicked.connect(self.sort)
+        self.checkBox_7.clicked.connect(self.sort)
+        self.checkBox_8.clicked.connect(self.sort)
+        self.checkBox_9.clicked.connect(self.sort)
 
         # Кнопки
 
@@ -646,8 +679,7 @@ class Serials(QMainWindow):
         else:
             self.clear_trailers()
 
-    @staticmethod
-    def clear_trailers():
+    def clear_trailers(self):
         """Функция удаляет установлинные трейлеры"""
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
@@ -655,7 +687,11 @@ class Serials(QMainWindow):
         )
 
         for trailer in data_on_downloaded_videos:
-            remove(f"data_videos/{trailer}")
+            try:
+                remove(f"data_videos/{trailer}")
+            except PermissionError:
+                QMessageBox.warning(self, "Информация", "не можем удалить трейлер трейлер открыт другим процессом\n"
+                                    "Для решение проблемы выдете с приложения и зайдите")
 
     def download_trailer(self):
         """Загрузка трейлера"""
@@ -709,14 +745,16 @@ class Serials(QMainWindow):
         """Скачивает и выводит на экран трейлер"""
 
         # Помогает сократить код
+        try:
+            yt = YouTube(url)
+            yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
+            yt.download("data_videos", filename + '.mp4')
 
-        yt = YouTube(url)
-        yt = yt.streams.filter(progressive=True, file_extension='').order_by('resolution').desc().first()
-        yt.download("data_videos", filename + '.mp4')
-
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
-        self.pushButton_2.setEnabled(True)
-        self.ready_for_viewing.setText("Трейлер готов к запуску")
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(f"data_videos/{filename + '.mp4'}")))
+            self.pushButton_2.setEnabled(True)
+            self.ready_for_viewing.setText("Трейлер готов к запуску")
+        except pytube.exceptions.RegexMatchError:
+            QMessageBox.warning(self, "Информация", "Извените при попытке найти трейлер произошла ошибка")
 
     def play(self):
 
@@ -758,9 +796,9 @@ class Serials(QMainWindow):
         """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
 
         if state:
-            self.data_criteria.add(self.sender().text())
+            self.data_criteria.add(self.sender().text().lower())
         else:
-            self.data_criteria.remove(self.sender().text())
+            self.data_criteria.remove(self.sender().text().lower())
 
         self.search_by_criteria()
 
@@ -809,15 +847,16 @@ class Serials(QMainWindow):
 
         if verification_serials is None:
             self.image_serials.setText("Фильм не найден....")
-            self.table_description_films.clear()
+            self.table_description_serials.clear()
             self.output_rating_films.setText('')
             self.output_age_films.setText('')
             self.output_date_films.setText('')
             self.output_seasons_films.setText('')
             self.output_nation_films.setText('')
             self.output_style_films.setText('')
+            self.output_reg.setText("")
             self.name_film.setText('')
-            self.table_description_serials.appendPlainText('')
+
         else:
             self.information_output(verification_serials[0])
 
@@ -866,7 +905,7 @@ class Serials(QMainWindow):
 
         selected_serial = self.table_serials.currentItem().text()[3:].split(", ")
         if selected_serial[0] != 'serial':
-            self.information_output(selected_serial[0])
+            self.information_output(selected_serial[0].strip())
 
     def information_output(self, serials):
 
@@ -954,14 +993,30 @@ class Serials(QMainWindow):
             pixmap = QPixmap(f"data_images/{id_film}.png")
             self.image_serials.setPixmap(pixmap)
         else:
+            try:
+                data = urllib.request.urlopen(url).read()
 
-            data = urllib.request.urlopen(url).read()
+                f = open(f"data_images/{id_film}.png", "wb")
+                f.write(data)
+                f.close()
+                pixmap = QPixmap(f"data_images/{id_film}.png")
+                self.image_serials.setPixmap(pixmap)
 
-            f = open(f"data_images/{id_film}.png", "wb")
-            f.write(data)
-            f.close()
-            pixmap = QPixmap(f"data_images/{id_film}.png")
-            self.image_serials.setPixmap(pixmap)
+            except AttributeError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_serials.setPixmap(pixmap)
+
+            except ValueError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_serials.setPixmap(pixmap)
+
+            except urllib.error.HTTPError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_serials.setPixmap(pixmap)
+
+            except urllib.error.URLError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image_serials.setPixmap(pixmap)
 
     # ----------------------------------------------<Основные Критерии>-------------------------------------------------
 
@@ -1022,14 +1077,14 @@ class BooksComics(QMainWindow):
 
         # Все критерии -> Вывод фильмов по критериям
 
-        # self.checkBox.clicked.connect(self.sort)
-        # self.checkBox_2.clicked.connect(self.sort)
-        # self.checkBox_4.clicked.connect(self.sort)
+        self.checkBox_12.clicked.connect(self.sort)
+        self.checkBox_11.clicked.connect(self.sort)
         self.checkBox_10.clicked.connect(self.sort)
-        self.checkBox_6.clicked.connect(self.sort)
-        self.checkBox_7.clicked.connect(self.sort)
-        self.checkBox_8.clicked.connect(self.sort)
         self.checkBox_9.clicked.connect(self.sort)
+        self.checkBox_8.clicked.connect(self.sort)
+        self.checkBox_7.clicked.connect(self.sort)
+        self.checkBox_6.clicked.connect(self.sort)
+        self.checkBox.clicked.connect(self.sort)
 
         # Кнопки Основных критерий
 
@@ -1093,15 +1148,31 @@ class BooksComics(QMainWindow):
             pixmap = QPixmap(f"data_images/{id_book}.png")
             self.image.setPixmap(pixmap)
         else:
-            data = urllib.request.urlopen(url).read()
+            try:
+                data = urllib.request.urlopen(url).read()
 
-            f = open(f"data_images/{id_book}.png", "wb")
-            f.write(data)
-            f.close()
+                f = open(f"data_images/{id_book}.png", "wb")
+                f.write(data)
+                f.close()
 
-            pixmap = QPixmap()
-            pixmap.loadFromData(data)
-            self.image.setPixmap(pixmap)
+                pixmap = QPixmap()
+                pixmap.loadFromData(data)
+                self.image.setPixmap(pixmap)
+            except AttributeError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image.setPixmap(pixmap)
+
+            except ValueError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image.setPixmap(pixmap)
+
+            except urllib.error.HTTPError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image.setPixmap(pixmap)
+
+            except urllib.error.URLError:
+                pixmap = QPixmap("Noimage.jpg")
+                self.image.setPixmap(pixmap)
 
     @staticmethod
     def isint(verification_number):
@@ -1134,11 +1205,11 @@ class BooksComics(QMainWindow):
         if len(verification_film) < 1:
             self.image.setText("Книга не найдена....")
             self.table_description.clear()
-            self.output_rating.setText('')
             self.output_date.setText('')
-            self.output_nation.setText('')
             self.output_style.setText('')
+            self.output_author.setText("")
             self.name.setText('')
+            self.output_tom.setText("")
             self.table_description.appendPlainText('')
         else:
             self.information_output(verification_film[0][0], verification_film[0][1])
@@ -1149,7 +1220,7 @@ class BooksComics(QMainWindow):
 
         selected_movie = self.table_books.currentItem().text()[3:].strip().split(", ")
         if selected_movie[0] != 'book':
-            self.information_output(selected_movie[0], selected_movie[4])
+            self.information_output(selected_movie[0].strip(), selected_movie[4].strip())
 
     def information_output(self, book, tom):
 
@@ -1157,19 +1228,27 @@ class BooksComics(QMainWindow):
 
         self.table_description.clear()
 
-        for value in sql.execute(f"SELECT * FROM data_books WHERE book = '{book}' and toms = {tom}"):
+        for value in sql.execute(f"""
+                     SELECT 
+                            data_books.id,
+                            data_books.book, 
+                            data_books.release, 
+                            id_authors.author, 
+                            id_genres_books.genre, 
+                            data_books.toms,
+                            data_books.discraption,
+                            data_books.image
+                     FROM data_books 
+                            LEFT JOIN id_authors ON data_books.author = id_authors.id 
+                            LEFT JOIN id_genres_books ON data_books.genre = id_genres_books.id  
+                     WHERE book = '{book}' and toms = {tom}"""):
             # Изображение
-            self.downloading_image(value[8], value[0])
+            self.downloading_image(value[7], value[0])
 
-            # Остальная информация
-
-            author = sql.execute(f"SELECT author FROM id_authors WHERE id = {value[3]}").fetchone()[0].capitalize()
-            genre = sql.execute(f"SELECT genre FROM id_genres_books WHERE id = {value[4]}").fetchone()[0].capitalize()
-
-            self.output_rating.setText(f'{value[2]}')
-            self.output_date.setText(f'{value[5]}')
-            self.output_nation.setText(f'{author}')
-            self.output_style.setText(f'{genre}')
+            self.output_author.setText(f'{value[3]}')
+            self.output_date.setText(f'{value[2]}')
+            self.output_style.setText(f'{value[4]}')
+            self.output_tom.setText(f'{value[5]}')
             self.name.setText(f'{value[1]}')
             self.table_description.appendPlainText(f'{value[6]}')
 
@@ -1185,15 +1264,13 @@ class BooksComics(QMainWindow):
         return f'''('{"', '".join(self.data_criteria)}')'''
 
     def sort(self, state):
+
         """Добавление и удалений из множества категорий так же сразу осуществляется сортировка"""
 
-        criteria = sql.execute(f"SELECT id FROM id_genres_books WHERE genre = '{self.sender().text().lower()}'"
-                               ).fetchone()[0]
-
         if state:
-            self.data_criteria.add(str(criteria))
+            self.data_criteria.add(self.sender().text().lower())
         else:
-            self.data_criteria.remove(str(criteria))
+            self.data_criteria.remove(self.sender().text().lower())
 
         self.output_by_sort_criteria()
 
@@ -1201,16 +1278,15 @@ class BooksComics(QMainWindow):
 
         """Вывод фильмов и краткой инфмормации в таблицу"""
 
-        author = sql.execute(f"SELECT author FROM id_authors WHERE id = '{value[3]}'").fetchone()[0]
-        genre = sql.execute(f"SELECT genre FROM id_genres_books WHERE id = '{value[4]}'").fetchone()[0].capitalize()
         self.table_books.addItem(f'{count}. '
+                                 f'{value[0]}, '
                                  f'{value[1]}, '
                                  f'{value[2]}, '
-                                 f'{author}, '
-                                 f'{genre}, '
-                                 f'{value[5]}')
+                                 f'{value[3]}, '
+                                 f'{value[4]}')
 
     def order_output_from_the_database(self):
+
         """Заголовок в котором показан порядок вывода информации"""
 
         self.table_books.addItem("book, release, author, genre, tom")
@@ -1224,13 +1300,29 @@ class BooksComics(QMainWindow):
         count = 1
         if len(self.data_criteria) > 0:
             for value in sql.execute(f"""
-                     SELECT * FROM data_books
-                     WHERE genre in {self.creating_request()}
+                     SELECT data_books.book, 
+                            data_books.release, 
+                            id_authors.author, 
+                            id_genres_books.genre, 
+                            data_books.toms  
+                     FROM data_books 
+                            LEFT JOIN id_authors ON data_books.author = id_authors.id 
+                            LEFT JOIN id_genres_books ON data_books.genre = id_genres_books.id 
+                     WHERE id_genres_books.genre in {self.creating_request()}
                      ORDER BY {sorting} {type_sorting}""").fetchall():
                 self.add_item(value, count)
                 count += 1
         else:
-            for value in sql.execute(f"SELECT * FROM data_books ORDER BY {sorting} {type_sorting}").fetchall():
+            for value in sql.execute(f"""
+                     SELECT data_books.book, 
+                            data_books.release, 
+                            id_authors.author, 
+                            id_genres_books.genre, 
+                            data_books.toms  
+                     FROM data_books 
+                            LEFT JOIN id_authors ON data_books.author = id_authors.id 
+                            LEFT JOIN id_genres_books ON data_books.genre = id_genres_books.id 
+                     ORDER BY {sorting} {type_sorting}""").fetchall():
                 self.add_item(value, count)
                 count += 1
 
@@ -1318,8 +1410,7 @@ class Settings(QMainWindow):
             for image in data_on_downloaded_images:
                 remove(f"data_images/{image}")
 
-    @staticmethod
-    def clear_all_trailers():
+    def clear_all_trailers(self):
         directory_videos = listdir("data_videos/")
         data_on_downloaded_videos = set(
             filter(lambda p: p.endswith(".mp4"), directory_videos)
@@ -1327,7 +1418,11 @@ class Settings(QMainWindow):
 
         if len(data_on_downloaded_videos) > 0:
             for video in data_on_downloaded_videos:
-                remove(f"data_videos/{video}")
+                try:
+                    remove(f"data_videos/{video}")
+                except PermissionError:
+                    QMessageBox.warning(self, "Информация", "не можем удалить трейлер трейлер открыт другим процессом\n"
+                                                            "Для решение проблемы выдете с приложения и зайдите")
 
     def add_confirmation_item(self):
         if sql.execute("SELECT confirmation FROM user").fetchone()[0] == "Вкл":
