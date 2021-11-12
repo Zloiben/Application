@@ -1,9 +1,9 @@
 import urllib.request
+from UI_file import Serials_ui, Settings_ui, Books_ui, Film_ui, Main_ui
 from os import remove, listdir
 import pytube
 from pytube import YouTube
 import sys
-from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QApplication, QStyle, QMainWindow, QMessageBox
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPixmap
@@ -14,7 +14,7 @@ db = sqlite3.connect("data_base.db")
 sql = db.cursor()
 
 
-class Main(QMainWindow):
+class Main(QMainWindow, Main_ui):
 
     """ Главное окно"""
 
@@ -34,7 +34,8 @@ class Main(QMainWindow):
 
         #
 
-        loadUi('ui/main.ui', self)
+        # loadUi('ui/main.ui', self)
+        self.setupUi(self)
 
         # Кнопки перехода в другое окно
 
@@ -74,11 +75,11 @@ class Main(QMainWindow):
         ex.close()
 
          
-class Films(QMainWindow):
+class Films(QMainWindow, Film_ui):
 
     def __init__(self):
         super().__init__()
-        loadUi('ui/film.ui', self)
+        self.setupUi(self)
 
         self.gui()
 
@@ -597,11 +598,11 @@ class Films(QMainWindow):
         self.basic_by_output()
 
 
-class Serials(QMainWindow):
+class Serials(QMainWindow, Serials_ui):
 
     def __init__(self):
         super().__init__()
-        loadUi('ui/serials.ui', self)
+        self.setupUi(self)
 
         self.name_serials_global = ''
 
@@ -1063,11 +1064,11 @@ class Serials(QMainWindow):
         self.basic_by_output()
 
 
-class BooksComics(QMainWindow):
+class BooksComics(QMainWindow, Books_ui):
 
     def __init__(self):
         super().__init__()
-        loadUi('ui/books_comics.ui', self)
+        self.setupUi(self)
 
         self.setWindowIcon(QIcon('icon.png'))
 
@@ -1356,11 +1357,11 @@ class BooksComics(QMainWindow):
         ex.show()
 
 
-class Settings(QMainWindow):
+class Settings(QMainWindow, Settings_ui):
 
     def __init__(self):
         super().__init__()
-        loadUi('ui/settings.ui', self)
+        self.setupUi(self)
 
         self.add_confirmation_item()
         self.add_language_item()

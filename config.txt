@@ -1,0 +1,3 @@
+language RU
+user No name
+image_user None
