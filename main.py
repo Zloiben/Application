@@ -886,14 +886,15 @@ class Serials(QMainWindow):
                             data_serials.age,
                             data_serials.description,
                             id_regisseurs.regisseur,
-                            data_serials.seasons
+                            data_serials.seasons,
+                            data_serials.images
                      FROM data_serials 
                             LEFT JOIN id_nations ON data_serials.nation = id_nations.id 
                             LEFT JOIN id_genres ON data_serials.genre = id_genres.id  
                             LEFT JOIN id_regisseurs ON data_serials.regisseur = id_regisseurs.id
                      WHERE serial = '{serials}'"""):
             # Изображение
-            self.downloading_image(value[9], value[0])
+            self.downloading_image(value[10], value[0])
 
             # Остальная информация
             self.output_rating_films.setText(f'{value[2]}')
@@ -902,7 +903,7 @@ class Serials(QMainWindow):
             self.output_seasons_films.setText(f'{value[9]}')
             self.output_nation_films.setText(f'{value[3]}')
             self.output_style_films.setText(f'{value[5]}')
-            self.output_reg.setText("")
+            self.output_reg.setText(f"{value[8]}")
             self.name_film.setText(f'{value[1]}')
             self.table_description_serials.appendPlainText(f'{value[7]}')
 
@@ -1021,14 +1022,14 @@ class BooksComics(QMainWindow):
 
         # Все критерии -> Вывод фильмов по критериям
 
-        self.checkBox.clicked.connect(self.sort)
-        self.checkBox_2.clicked.connect(self.sort)
-        self.checkBox_4.clicked.connect(self.sort)
+        # self.checkBox.clicked.connect(self.sort)
+        # self.checkBox_2.clicked.connect(self.sort)
+        # self.checkBox_4.clicked.connect(self.sort)
+        self.checkBox_10.clicked.connect(self.sort)
         self.checkBox_6.clicked.connect(self.sort)
         self.checkBox_7.clicked.connect(self.sort)
         self.checkBox_8.clicked.connect(self.sort)
-        self.checkBox_3.clicked.connect(self.sort)
-        self.checkBox_5.clicked.connect(self.sort)
+        self.checkBox_9.clicked.connect(self.sort)
 
         # Кнопки Основных критерий
 
